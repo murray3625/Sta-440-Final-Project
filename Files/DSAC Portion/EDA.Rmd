@@ -1,0 +1,177 @@
+---
+title: "DSAC NFL Project (EDA)"
+author: "Rex Evans, Sofia Bliss-Carrascosa, Matthew Murray"
+date: "11/7/2021"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+library(naniar)
+college_qbs <- read.csv("df.csv")
+```
+
+```{r datacleaning}
+college_qbs <- college_qbs %>% 
+  replace_with_na_at(.vars = c("Year.Drafted","Draft.Round", "Years.on.Payroll", "Games.Started"),
+                     condition = ~.x == "N/A")
+
+college_qbs <- college_qbs %>%
+  mutate(Drafted = if_else(is.na(Year.Drafted), "No", "Yes"),
+         Year.Drafted = as.numeric(Year.Drafted),
+         Draft.Round = as.numeric(Draft.Round),
+         Years.on.Payroll = as.numeric(Years.on.Payroll),
+         Games.Started = as.numeric(Games.Started))
+
+college_qbs <- college_qbs %>%
+  mutate(total.TDs = Pass.TD + Rush.TD) %>%
+  mutate(TD.per.game = total.TDs/G)
+
+drafted_qbs <- college_qbs %>%
+  filter(Drafted == "Yes") %>%
+  mutate(NFL.Years.Grouped = 
+           case_when(Years.on.Payroll == 0 ~ "0 Years", 
+                     (Years.on.Payroll > 0 & Years.on.Payroll < 6) ~ "1-5 Years", 
+                     (Years.on.Payroll >5 & Years.on.Payroll <11) ~ "6-10 Years", 
+                     (Years.on.Payroll >10 & Years.on.Payroll <16) ~ "11-15 Years", 
+                     (Years.on.Payroll >15 & Years.on.Payroll <21) ~ "16-20 Years",
+                     Years.on.Payroll >20 ~ "+20 Years",))
+
+drafted_qbs <- drafted_qbs %>%
+  mutate(Sustained.Success = 
+           if_else(NFL.Years.Grouped == "0 Years" | 
+                     NFL.Years.Grouped == "1-5 Years",
+                   "No", "Yes"))
+
+drafted_qbs$NFL.Years.Grouped <- factor(drafted_qbs$NFL.Years.Grouped,
+                         levels = c("0 Years", 
+                                    "1-5 Years", 
+                                    "6-10 Years", 
+                                    "11-15 Years", 
+                                    "16-20 Years", 
+                                    "+20 Years"))
+```
+
+```{r gamesstartedcollege}
+ggplot(college_qbs, aes(x = G)) +
+  geom_histogram(binwidth = 5) +
+  facet_wrap(~ Drafted) +
+  labs(x = "Games Started in College",
+       y = "Number of Games",
+       title = "Games Started in College, faceted by Draft Status")
+
+drafted_qbs %>%
+  filter(!is.na(Years.on.Payroll)) %>%
+  ggplot(aes(x = G)) +
+  geom_histogram(binwidth = 5) +
+  facet_wrap(~ NFL.Years.Grouped) +
+  labs(x = "Games Started in College",
+       y = "Number of Games",
+       title = "Games Started in College, faceted by Number of Years in NFL")
+```
+
+```{r}
+drafted_qbs %>%
+  filter(!is.na(Years.on.Payroll)) %>%
+  ggplot(aes(x = NFL.Years.Grouped)) +
+  geom_bar() +
+  labs(x = "Years in NFL",
+       y = "Number of Recorded QBs",
+       title = "Years in NFL")
+drafted_qbs %>%
+  ggplot(aes(x = Years.on.Payroll)) +
+  geom_boxplot()
+```
+
+
+
+```{r games-draft}
+ggplot(college_qbs, aes(x = G, y = Drafted)) + 
+  geom_boxplot() +
+  labs(x = "Games Started in College", 
+       y = "Drafted?",
+       title = "Games Started in College vs Draft Success")
+
+ggplot(college_qbs, aes(x = Pass.Pct, y = Drafted)) + 
+  geom_boxplot() +
+  labs(x = "Pass Percentage", 
+       y = "Drafted?",
+       title = "Pass Percentage in College vs Draft Success")
+
+ggplot(college_qbs, aes(x = Pass.Yds, y = Drafted)) + 
+  geom_boxplot() +
+  labs(x = "Passing Yards", 
+       y = "Drafted?",
+       title = "Passing Yards in College vs Draft Success")
+
+ggplot(college_qbs, aes(x = Rush.Yds, y = Drafted)) + 
+  geom_boxplot() +
+  labs(x = "Rushing Yards", 
+       y = "Drafted?",
+       title = "Rushing Yards in College vs Draft Success")
+
+ggplot(college_qbs, aes(x = TD.per.game, y = Drafted)) + 
+  geom_boxplot() +
+  labs(x = "TD per game (Passing and Rushing)", 
+       y = "Drafted?",
+       title = "TD per game in College vs Draft Success")
+```
+
+```{r gamescoll-pro}
+ggplot(drafted_qbs, aes(x = G, 
+                        y = Games.Started, 
+                        color = as.factor(Draft.Round))) + 
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_wrap(~ Draft.Round) +
+  labs(x = "Games Started in College", 
+       y = "Games Started in NFL",
+       color = "Draft Round",
+       title = "Games Started in College vs NFL, drafted players only")
+```
+
+```{r TD-stats}
+college_qbs %>%
+  ggplot(aes(x = total.TDs, y = Drafted)) +
+  geom_boxplot()
+
+drafted_qbs %>%
+  ggplot(aes(x = TD.per.game, y = Pass.Pct, color = Sustained.Success)) +
+  geom_point()
+```
+
+
+```{r games-yearspaid}
+ggplot(drafted_qbs, aes(x = G, y = Years.on.Payroll)) + 
+  geom_point() +
+  geom_smooth(method = "lm") +
+  labs(x = "Games Started in College", 
+       y = "Years on Payroll in NFL",
+       title = "Games Started in College vs NFL Years on Payroll, drafted players only")
+```
+
+```{r}
+ggplot(drafted_qbs, mapping = aes(x = Pass.Pct, 
+                                  y = Games.Started, 
+                                  color = Years.on.Payroll)) + 
+  geom_point() +
+  geom_smooth(method = "lm") +
+  labs(x = "Pass Percentage (College)",
+       y = "Games Started (NFL)",
+       color = "Years on Payroll (NFL)")
+```
+
+
+```{r}
+write.csv(college_qbs, 'college_qbs.csv', row.names=FALSE) 
+```
+
+

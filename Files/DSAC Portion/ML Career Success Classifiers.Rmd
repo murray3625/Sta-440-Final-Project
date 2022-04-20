@@ -1,0 +1,115 @@
+---
+title: "Career Success Classifier"
+author: "Matthew Murray"
+date: "11/23/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+# libraries
+library(dplyr)
+library(ggplot2)
+library(ggpubr)
+
+```
+
+```{r}
+
+# load data 
+data <- read.csv("df.csv")
+
+```
+
+```{r}
+
+qb.drafted <- data[which(data$Year.Drafted != "N/A"), "Player"]
+
+```
+
+## Introduction and Motivation
+
+For this project, my team and I tracked the statistics of 1131 NCAA quarterbacks from 2000 - 2019. These quarterbacks were the top passing statistical leaders in the NCAA during their respective years in college. Of these quarterbacks, only 18.83% were drafted. As one will later see in the Exploratory Data Analysis, most of these quarterbacks do not have very lengthy careers in the NFL, meaning that most quarterbacks, while successful in college, experience slim success at the professional level. 
+
+The goal of this project is to develop a classifier that looks to predict the "success" of a NFL quarterback based on his college statistics. I will utilize the following classifier models:
+
+1. Logistic Regression
+
+2. k-Nearest Neighbors (KNN)
+
+3. Classification Tree Ensembles
+
+> a. Bagging Tree
+
+> b. Random Forest
+
+> c. Boosting Tree
+  
+4. Support Vector Machines
+
+## Exploratory Data Analysis
+
+```{r}
+
+data.subset <- data[which(data$Year.Drafted != "N/A"),]
+not.under.contract <- data.subset[which(data.subset$Under.Contract == "No"),]
+not.under.contract$Years.on.Payroll <- as.numeric(not.under.contract$Years.on.Payroll)
+data.subset$Years.on.Payroll <- as.numeric(data.subset$Years.on.Payroll)
+
+```
+
+```{r, warning=FALSE}
+
+# histogram for years on payroll for retired quarterbacks
+
+h.y.o.p <- ggplot(data = not.under.contract, aes(x=Years.on.Payroll)) + geom_histogram(stat="count") + labs(x = "Years on Payroll", y = "Count", title = "Distribution of Years on Payroll", caption = "Among drafted quarterbacks who are now retired") + theme(plot.title = element_text(hjust = 0.5))
+h.y.o.p
+
+
+```
+
+```{r, warning=FALSE}
+
+# histogram for years on payroll for ALL drafted QB's
+
+h.y.o.p2 <- ggplot(data = data.subset, aes(x=Years.on.Payroll)) + geom_histogram(stat="count") + labs(x = "Years on Payroll", y = "Count", title = "Distribution of Years on Payroll") + theme(plot.title = element_text(hjust = 0.5))
+h.y.o.p2
+
+```
+
+```{r, warning=FALSE}
+
+# correlation plot between draft round and years on payroll
+# from the ggpubr library
+
+not.under.contract$Games.Started <- as.numeric(not.under.contract$Games.Started)
+
+not.under.contract$Draft.Round <- as.numeric(not.under.contract$Draft.Round)
+
+ggscatter(data = not.under.contract, x = "Games.Started", y = "Draft.Round",
+          add = "reg.line", conf.int = TRUE,
+          cor.coef = TRUE, cor.method = "spearman",
+          xlab = "Games Started", ylab = "Draft Round")
+
+```
+
+The above correlation coefficient and corresponding p-value indicates that there is a moderate negative linear relationship between `Games Started` and `Draft Round`. Another notable takeaway from this plot is that the confidence interval for the line of best fit increases with the variable `Games Started`. The wider confidence intervals can likely be attributed to the fact that there are less data points (players) with high amounts of game started and more players with lower amounts of games started.
+
+More information about this plot and correlation coefficients:
+http://www.sthda.com/english/wiki/correlation-test-between-two-variables-in-r
+
+```{r}
+
+data$Games.Started <- as.numeric(data$Games.Started)
+data.most.games <- data %>%
+  arrange(desc(Games.Started)) %>%
+  slice(1:10)
+data.most.games <- data.most.games[c("Player", "Games.Started")]
+print(data.most.games)
+
+```
+

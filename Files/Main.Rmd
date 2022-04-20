@@ -1,0 +1,551 @@
+---
+title: |
+  <center> Predicting NFL Success among </center>
+  <center> NCAA Quarterbacks from 1999-2019 </center>
+author: "Matthew Murray"
+geometry: "top = 2cm, bottom = 2cm, left = 2cm, right = 2cm"
+fontsize: 10 pt
+bibliography: ref.bib  
+output: 
+  pdf_document:
+    latex_engine: pdflatex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, 
+                      warning = F, 
+                      message = F)
+```
+
+```{r dataset}
+
+# read in dataset 
+data <- read.csv("df.csv")
+ncaa.data <- read.csv("DSAC Portion/ncaa.data.csv")
+
+```
+
+```{r libraries}
+
+# libraries 
+library(dplyr)
+library(kableExtra)
+library(broom)
+library(gtsummary)
+library(ggplot2)
+library(ggpubr)
+library(MASS)
+library(car)
+library(corrplot)
+library(rpart)
+library(rpart.plot)
+library(rattle)
+library(sjPlot)
+library(sjmisc)
+library(sjlabelled)
+library(tidyverse)
+library(rlang)
+library(usethis)
+
+```
+
+# 1 Introduction 
+
+## 1.1 Background
+
+In pro football, it is implicitly assumed that the quarterback position is the most important, as he is the focal point of any NFL team’s offense. Sports writer and former NFL player Scott Fujita wrote (about quarterbacks): “No other football position can have such an impact on the win-lose outcome of professional matches”(@ScottFujita). Quarterbacks are also among the highest paid players in the NFL, with an average salary (as of April 2022) of $6.48 million (@NFLPayrolls), second to only left tackles, the protectors of a quarterback’s “blind spot”. 
+
+Due to the salience of the position, it is not surprising that NFL scouts place a very high priority on scouting NCAA quarterbacks and determining which quarterbacks’ college success will translate to success at a higher level. Nonetheless, this task is much more difficult than expected. There has been no shortage of All-American caliber, star college quarterbacks who were lauded immensely for their talent and potential, but failed to fulfill said potential once they reached the pros. One notable example of such a player is Ryan Leaf, whom many refer to as the biggest bust in NFL history (Add Source). Leaf played his collegiate years at Washington State where he finished as a first team All-American and Heisman trophy finalist in 1997. After being drafted second overall in the 1998 NFL Draft by the San Diego Chargers, Leaf was out of the NFL by 2001. He finished his career with 14 touchdowns, 36 interceptions, and an abysmal starting record of 4-17. On the other hand, there are diamonds in the rough like Tom Brady. Brady, who is widely recognized as the greatest quarterback of all time, greatly exceeded expectations when he was drafted 199th overall in the 6th round of the 2000 NFL Draft. Today, Brady's awards and accolades are too long to list. All in all, finding the college quarterbacks who will flourish in the NFL is quite the tall task, 
+
+## 1.2 Dataset Description and Variables
+
+The dataset for this report contains statistics for NCAA Division 1 quarterbacks from 1999 to 2019. The data was scraped from Sports Reference, a US company that runs several sports statistics-related websites, one of which is dedicated to college football. Excel files with the quarterback data were downloaded, converted into comma separated files (CSV’s), and read into my RStudio coding environment. Each of the Excel files contained the top 100 NCAA quarterbacks for a given year in terms of passing yards per attempt. Several steps were then taken to clean and tidy the data. The first row was set as each dataset’s column names, the unnecessary Rank column was deleted, the columns were renamed to deal with columns that had the same name (more specifically, columns referring to either passing or rushing statistics were labeled as such), and a new column was added to indicate the year that a quarterback played. These steps were taken for all 21 data sets before they were all merged into one dataset. Another issue with the data set that was remedied is that there were multiple entries for a single player, as most (if not, all) college football players play multiple years in college. To solve this problem, I merged the rows referring to the same player and either summed or averaged the variables for said player accordingly. For example, I took the *sum* of the games played variable and the *average* or *mean* of the completion percentage variable for a given quarterback. After these steps were taken, the dataset contains 1,130 observations, or in other words, statistics for 1,130 college quarterbacks. Of these quarterbacks, only `r round(214/1130, 3) * 100`% were selected in the NFL draft. 
+
+Additionally, data related to a quarterback’s NFL career was imputed into the dataset. These variables were collected in an attempt to find data that defines a player’s pro “success”, which is admittedly difficult to quantify. The data was taken from various Wikipedia pages. For example, the variables for *years on an NFL payroll* and *games started* were collected because the most successful NFL quarterbacks are likely to stick around and have longer careers, simply because teams will want their skillsets. The average career length of an NFL player is approximately 3.3 years, while that of an NFL quarterback is 4.4 years (@Statista). Meanwhile, the average career length of an NFL player who plays in at least one Pro Bowl — the NFL equivalent of an All-Star game — is 11.7 years (@Sportscasting). I also collected data regarding whether or not a quarterback has made at least one Pro Bowl during his career. 
+
+This data was originally collected by myself, along with two other Duke undergraduate students, Sofia Carrascosa and Rex Evans, for a project in the Duke Sports Analytics Club (DSAC). However, since the data scraping, cleaning, and imputation took longer than expected, our group did not pursue a project together. 
+
+## 1.3 Objectives
+
+My paper’s broader objective is to determine which variables related to a quarterback’s college statistics are most strongly associated with NFL success. In other words, I hope to identify which characteristics and statistical trends to look for when predicting whether or not a college quarterback will succeed in the pros. In doing so, I also hope to aptly define and quantify “success," which is admittedly subjective.  
+
+## 1.4 Exploratory Data Analysis 
+
+```{r data-wrangling-1, include = FALSE}
+
+# new function
+data <- na_if(data, "N/A")
+`%notin%` <- Negate(`%in%`)
+
+# new variable for Power 5 
+data <- data %>%
+  mutate(Power5 = ifelse(Conf %in% c("ACC", "Big Ten", "Big 12", "Pac-12", "Pac-10", "SEC", "Big East"), "Yes", "No")) 
+  
+# data subsetting 
+data.subset <- data %>%
+  filter(Year.Drafted %notin% c("UDFA"),
+         !is.na(Year.Drafted))
+
+# data exploration
+data.subset %>%
+  group_by(Year.Drafted) %>%
+  count() %>%
+  ungroup() %>%
+  mutate(mean = mean(n))
+
+data.year.conf <- data %>%
+  group_by(Year.Drafted, )
+  
+
+```
+
+```{r data-wrangling-2}
+
+# imputing data for players who made at least 1 Pro Bowl
+data.subset$ProBowl <- "No"
+data.subset[data.subset$Player == "Aaron Rodgers", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Tom Brady", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Josh Allen", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Kirk Cousins", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Justin Herbert", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Lamar Jackson", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Mac Jones", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Patrick Mahomes", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Kyler Murray", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Dak Prescott", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Russell Wilson", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Drew Brees", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Ryan Tannehill", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Deshaun Watson", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Jared Goff", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Andrew Luck", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Phillip Rivers", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Mitchell Trubisky", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Carson Wentz", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Alex Smith", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Ben Roethlisberger", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Matt Ryan", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Andy Dalton", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Derek Carr", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Teddy Bridgewater", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Eli Manning", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Tyrod Taylor", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Jameis Winston", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Tony Romo", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Nick Foles", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Cam Newton", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Robert Griffin III", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Matt Schaub", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Michael Vick", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Matt Cassel", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "David Garrard", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Donovan McNabb", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Vince Young", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Jay Culter", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Derek Anderson", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Carson Palmer", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Marc Bulger", "ProBowl"] <- "Yes"
+data.subset[data.subset$Player == "Daunter Culpepper", "ProBowl"] <- "Yes"
+
+# creating more variables
+data.subset <- data.subset %>%
+  mutate(U.C = ifelse(Under.Contract == "Yes", 1, 0),
+         P.5 = ifelse(Power5 == "Yes", 1, 0),
+         PB = ifelse(ProBowl == "Yes", 1, 0),
+         PYG = Pass.Yds / G,
+         INTG = Pass.Int / G,
+         TDG = Pass.TD / G)
+
+
+```
+
+```{r figure-1}
+
+f1 <- ggplot(data = data.subset, 
+       aes(x = Year.Drafted)) + 
+  geom_bar() +
+  labs(x = "Year", 
+       y = "Number of QB's Drafted", 
+       title = "Number of QB's Drafted by Year",
+       caption = "Figure 1") +  
+  geom_hline(yintercept = 10.7, color = "red") +
+  theme_bw() +
+  theme(text = element_text(family = "serif")) +
+  theme(plot.title=element_text(family = "serif", face = "bold", hjust = 0.5, size = 10))
+
+```
+
+```{r figure-2}
+
+f2 <- ggplot(data = data.subset, 
+       aes(x = Conf)) + 
+  geom_bar() +
+  labs(x = "Conference", 
+       y = "Number of QB's Drafted", 
+       title = "Number of QB's Drafted by NCAA Conference",
+       caption = "Figure 2") +  
+  theme_bw() +
+  theme(text = element_text(family = "serif")) +
+  theme(plot.title=element_text(family = "serif", face = "bold", hjust = 0.5, size = 10))
+
+```
+
+```{r figure-3}
+
+f3 <- ggplot(data = data.subset, 
+       aes(x = as.numeric(Years.on.Payroll))) + 
+  geom_histogram() +
+  labs(x = "Number of Years on NFL Payroll", 
+       y = "Count", 
+       title = "Distribution of the Number of Years on an NFL Payroll",
+       caption = "Figure 3") +  
+  theme_bw() +
+  theme(text = element_text(family = "serif")) +
+  theme(plot.title=element_text(family = "serif", face = "bold", hjust = 0.5, size = 10))
+
+```
+
+```{r figure-4}
+
+ncaa.data.grouped <- ncaa.data %>%
+  group_by(Conf, Year) %>%
+  summarise(Mean.Pass.Pct = mean(as.numeric(Pass.Pct))) %>%
+  subset(Conf %in% c("ACC", "Big 12", "Big East", "Big Ten", "Pac-10", "Pac-12", "SEC"))
+
+f4 <- ggplot(data = ncaa.data.grouped, 
+       aes(x = Year, y = Mean.Pass.Pct, color = Conf)) + 
+  geom_line() +
+  labs(x = "Year", 
+       y = "Average Completion Percentage", 
+       title = "Average Completion Percentage by Year (Power 5 Conferences)",
+       caption = "Figure 4") +  
+  theme_bw() +
+  theme(text = element_text(family = "serif")) +
+  theme(plot.title=element_text(family = "serif", face = "bold", hjust = 0.5, size = 10))
+
+```
+
+```{r display-plots, fig.height=7.5, fig.width=10}
+
+ggarrange(f1, f2, f3, f4, ncol = 2, nrow = 2)
+
+```
+
+
+\pagebreak
+
+# 2 Methodology
+
+## 2.1 Model Selection
+
+The model of choice is a logistic regression model that seeks to predict whether or not a quarterback will make at least one Pro Bowl during his NFL career. The rationale behind this model is that the best quarterbacks in the NFL -- which is what teams are looking for when scouting -- will likely make *at least one* Pro Bowl during their respective careers in the pros. One can argue that there is subjectivity in the selection of players to the Pro Bowl since players need to be voted in by fans, players, and coaches, but by in large, the *best* quarterbacks seem to make the Pro Bowl at least once in their careers. Logistic regression was chosen due to its high interpretability and suitability for binary outcome variables. Our model was fit using the ``glm()`` function in R. 
+
+Alternative models that I considered involve different linear regression models. One option that I considered is a linear regression model that seeks to predict the number of years that a quarterback is on an NFL payroll. The reasoning behind this modeling choice is that the best quarterbacks will remain in the NFL for longer periods of times because teams will recognize their talent. In other words, this model is assuming that a "successful" NFL quarterback is one who remains in the NFL for a relatively long period of time. Nonetheless, the main limitation of this response variable is that quarterbacks can remain in the league for a long time as a backup, sitting second or third in a depth chart. While these players may appear to be successful because they remain in NFL for a while, they may not be seeing the field often. Furthermore, some quarterbacks, while extremely talented and successful, may not play in the NFL for very long due to concerns over the violent nature of the sport and various other personal considerations, a very notable example being Andrew Luck. Luck, a four-time Pro Bowler who was widely recognized as one of the best quarterbacks in the NFL, shocked the NFL world when he retired from football in 2019 at the young age of 29. He cited injury concerns as the main reason for his retirement. 
+
+Another linear regression model that I considered is one that predicts the number of games that a QB starts in the NFL. However, I decided to not use games started as my response variable due to the fact that this number can be influenced by many extraneous factors that my model cannot take into account such as injuries and overall team/organizational success (i.e. players who play for more successful organizations will start more games since they will be making deeper playoff runs). 
+
+## 2.2 Variable Selection
+
+For variable selection, I decided against set model selection criterion such as *AIC* or *BIC*. The use of these criterion often involves greedy variable selection algorithms like backward elimintation and forward selection, and furthermore is a form of post-selection inference. Instead, I used literature and my knowledge about the game of football to conjecture a pool of variables that can potentially serve as useful predictors. Fron there, I used other statistical tools to determine which of these variables work best for the model. One thing to note is that when thinking about predictors, I wanted to choose variables that are stable in the sense that they translate well from the college game from the pro game. The predictors that I considered using in my model, as well as the reasons for their consideration, are discussed below:
+
+* **Completion Percentage** - A quarterback's completion percentage -- or accuracy for short -- is widely regarded as one of the best barometer's of a quarterback's ability to exceed at the next level. *Bleacher Report* writer and NFL Scout Matt Miller writes: "Despite what some may say, accuracy is one of the few traits that I believe you cannot coach into a quarterback" (@BleacherReport). Serendipitously, accuracy is also one of the easiest traits to quantify compared to other important characteristics like vision, leadership, and pocket presence. However, one weakness of the completion percentage statistic is that quarterbacks can pad their completion percentage through frequent short, safe passes. 
+
+* **Average Touchdowns per Game** - 
+
+* **Average Interceptions per Game** - 
+
+* **Adjusted passing yards per Attempt** - To control for the shortcomings and limitations of completion percentage, I also decided to include adjusted yards per attempt in the model to help account for the difficulty of the passes that a quarterback attempts. *Adjusted* yards per attempt measures the average yardage of a quarterback's passing attempts while accounting for touchdowns and interceptions. It is a more useful statistic than solely yards per attempt because it gives weight to more impactful passes, namely touchdowns and interceptions. Its formula is as follows: **Pass AY/An = Yds + 20\*TD - 45*Int) / Att**. Some models choose to combine these two metrics (completion percentage and yards per attempt) to create a statistic for *expected* completion percentage, but for simplicity, I decided to include the two variables separately.  
+
+* **Passer Rating** - A quarterback's passer rating is an all-in-one type of metric that looks to take a hollistic approach to measuring a quarterback's passing performance. The NFL adopted it in 1973 so that there could be a statistic that can referred to when determining who was the best passer in the league in a given season (@Sportscasting2). Today, the NFL and NCAA have different formulas for competing this statistic, the principles and underlying reasoning behind each remain the same. The formula for NCAA passer rating is:
+
+$$
+\frac{(8.4 * YDS) + (330 * TDP) + (100 * CMP) - (200 * INT)}{ATT}
+$$
+
+* **Average Rushing Yards per Attempt** - A recent trend in the NFL has been teams' increasing affinity towards quarterbacks who are athletic and can run. Today, some of the most elite quarterbacks -- Lamar Jackson, Russell Wilson, Josh Allen, and Patrick Mahomes, to name a few -- are labeled "dual threat" quarterbacks, meaning that they are effective with *both* their arms and their legs. In the 2020 NFL season, quarterbacks rushed for 8,697 yards, the most in NFL history and 14.3% of all rushing yards (@SBNation).
+
+* **Power 5 Conference or Not** - Additionally, I chose to create an indicator variable for whether or not a quarterback played in a Power 5 conference. The rationale for creating this variable is that competition is likely more difficult in Power 5 conferences, so including this variable is a way of accounting for the increased level of competition. Today, the Big Ten is the Power 5 conference that is often associated with creating the best quarterbacks, The creation of this variable was inspired by Josh Hermsmeyer; in his *FiveThirtyEight* article, he explains how he adjusts a quarterback's completion percentage for the conference that he plays in to account for the level of competition that he faces (@FiveThirtyEight). He uses the example of Russell Wilson, who in 2011 had a raw completion percentage of 73%. However, in the same year, the expected completion percentage for a quarterback in the Big Ten with the same number of passes and the same target depth is 57%, meaning that Wilson's accuracy is 16 percentage points above expected. Today, the Power 5 conferences consist of the following conferences:
+
+1. Atlantic Coastal Conference (ACC)
+2. Big Ten 
+3. Big 12
+4. Pac-12
+5. Southeastern Conference (SEC)
+
+Nonetheless, in the past, the other conferences in the Power 5 include the Big East and the Pac-10 (which is now more appropriately named the Pac-12). Additionally, I included Notre Dame, while independent and not officially apart of a conference, as among the Power 5 schools. The rationale behind this grouping is that Notre Dame is currently a full voting member of the ACC (as they play 5 ACC schools each year), and for years -- before its agreement with the ACC -- Notre Dame has played a schedule with a plethora of Power 5 schools due to its annual rivalries with schools like USC, Stanford, and in past years, Michigan. 
+
+* **Whether or not the quarterback was under contract (at time of data collection) ** - Lastly, I chose to create an indicator variable for whether or not the player was under contract at the time of data collection (Fall 2021). This variable was created to account for the fact that players who are still in the NFL, while exceptional and NFL-worthy talent, may not have as many years on payroll and games started as players who have already finished their careers. 
+
+### 2.2.1 Variable Correlation Matrix  
+
+Below is a correlation matrix displaying the correlations between all the variables discussed above:
+
+```{r corrplot, fig.height=7.5, fig.width=10}
+
+data.model <- data.subset[, c("Pass.Pct", "Pass.AY.A", "Pass.Rate",
+                              "TDG", "INTG", "Rush.Avg",
+                              "P.5", "U.C")]
+mat <- cor(data.model)
+
+colnames(mat) <- c("Completion %", "Adj. Yards per Att", "Passer Rating", 
+                   "TD per Game", "INT per Game", "Avg. Rush", "Power 5?", "Under Contract?")
+
+rownames(mat) <- c("Completion %", "Adj. Yards per Att", "Passer Rating", 
+                   "TD per Game", "INT per Game", "Avg. Rush", "Power 5?", "Under Contract?")
+
+corrplot(mat, method = "number",type = "upper", 
+         tl.col="black", tl.cex=0.8, tl.srt=70,
+         title = "Correlation Matrix for Potential Logistic Regression Model Covariates",
+         mar=c(0,0,2,0))
+text("Figure 5", x = 3, y = 2)
+
+```
+
+In the plot above, the numbers represent the Pearson correlation coefficients between two variables. The closer the values are to 1 or -1, the stronger the correlation between two variables. The purpose of this plot is to see which variables are most highly correlated with each other. Correlated predictors is a problem in logistic regression because it leads to multicollinearity, which inflates the variance of model parameters, making them unstable and highly sensitive to training data. Additionally, multicollinearity leads to p-values that are higher than they may seem. In other words, when multicollineairity is present in high amounts, results that may *appear* to be statistically significant may not *actually* be statistically significant because p-values are higher than reported. 
+
+In the plot above, the highest correlation between two predictors is 0.97, which is the Pearson correlation coefficient between adjusted yards per attempt and passer rating. There is also a high correlation coefficient (0.77) between completion percentage and passer rating. The *positive* correlation coefficient between completion percentage and adjusted yards per attempt is surprising because, as noted earlier, quarterbacks can pad their completion percentage through short, safe passes. Therefore, one would expect *higher* completion percentages to be associated with *lower* yards per attempt, and vice versa. To remedy the problem of multicollinearity, I decided to remove predictors that have a bivariate Pearson correlation coefficient of 0.7 or above, as suggested by *Using Multivariate Statistics, 7th Edition* (@Tabachnick). Therefore, I will remove Passer Rating from my pool of predictors. 
+
+**Discuss ways to select features when you have variables that are correlated such as PCA, LASSO regression**
+
+### 2.2.2 Classification Tree
+
+I also decided to create a classification tree to further guide my variable selection process. Classification trees are very useful tools for variable selection, as they rely on little assumptions (especially compared to logistic regression), can give insight into the order of importance of predictor variables, and are useful for examining potential interaction effects. Similar to how an interaction effect allows one to interpret the effect of one predictor on the response based on the value of another predictor, with classification trees, the interpretation of one node is often dependent on the value of another node.
+
+Nonetheless, classifications trees have drawbacks as well. A classification tree itself can be very sensitive to hyper-parameter tuning, meaning that its results may not be as stable and useful as those from logistic regression. Additionally, decision trees are fit using a greedy algorithm, recursive binary splitting. Recursive binary splitting is “greedy” because at each step of the process of building the tree, the “best” split is made at that particular step, rather than looking ahead and making a split that will lead to a better overall predictions. Since we are
+using a decision tree to explore potential relationships/variables for our logistic regression model, this tendency may mislead us into ignoring the macro-level trends and correlations. Another notable downside of decision trees is that they can easily be overfit to one’s training data, particularly when using many predictor variables without a type of model selection criterion. To account for this problem, we decided to use a post-pruning method called cost complexity pruning. At a high level, cost complexity pruning obtains a sequence of trees that are penalized for the number of nodes they have via a tuning parameter. The optimal value for this tuning parameter is then obtained using cross-validation, and consequently the optimal tree is obtained using this value.
+
+I fit the classification tree using the ``rpart()`` function from the ``rpart`` package and pruned the tree using the ``prune()`` function from the same package.
+
+```{r classification-tree, fig.height = 4}
+
+tree <- rpart(ProBowl ~ Pass.Pct + Pass.AY.A +
+                TDG + INTG + Rush.Avg + 
+                 U.C + P.5,
+              data = data.subset, method = "class", 
+              control = rpart.control("minsplit" = 10))
+# Pruning
+tree <- prune(tree, cp = 0.04)
+rpart.plot(tree, extra = 106)
+
+```
+
+**Add interpretations for classification tree**
+**Beautify Classification tree**
+
+## 2.3 Model Specification
+
+\begin{equation*}
+\textrm{log}(\frac{P(\textrm{Pro Bowl}_{i} = 1)}{1-P(\textrm{Pro Bowl}_{i} = 1)}) = \beta_{0} + 
+\beta_{1}\textrm{Average Adjusted Passing Yards per Game}_{i} +
+\beta_{2}\textrm{Average Touchdown Passes per Game}_{i} +
+\end{equation*}
+\begin{equation*}
+\beta_{3}\textrm{Average Interceptions Game}_{i} +
+\beta_{4}I(\textrm{Under Contract}_{i} = \textrm{Yes})
+\end{equation*}
+
+
+## 2.4 Model Diagnostics
+
+The three conditions/assumptions that should hold for logistic regression are as follows:
+
+1. The log-odds have a linear relationship with the predictors.
+2. The data were obtained from a random process. 
+3. The observations should be independent from each other. 
+
+\pagebreak
+
+# 3 Results 
+
+```{r, include=FALSE}
+
+model.1 <- lm(data = data.subset, formula = PB ~ Pass.Pct + 
+                Pass.AY.A + Pass.Rate + U.C + P.5 + Rush.TD)
+tidy(model.1) %>%
+  kable(digits = 3)
+
+model.2 <- glm(data = data.subset, formula = PB ~ Pass.Cmp + 
+                Pass.Att + Pass.Pct + Pass.Yds + Pass.AY.A + Pass.TD +
+                Pass.Int + Pass.Rate + Rush.Att + Rush.Yds + Rush.Avg +
+                Rush.TD + U.C + P.5, family = binomial)
+
+model.3 <- stepAIC(model.2)
+tidy(model.3) %>%
+  kable(digits = 3)
+
+model.4 <- glm(data = data.subset, formula = PB ~ Pass.Pct + Pass.Yds + 
+                 Pass.AY.A + Pass.Int + Pass.Rate + Rush.Avg + 
+                 U.C + P.5, family = binomial)
+tidy(model.4) %>%
+  kable(digits = 3)
+
+summary(model.4)
+
+
+vif(model.4)
+
+model.5 <- glm(data = data.subset, formula = PB ~ Pass.Pct + Pass.AY.A + 
+                + Pass.Yds + Rush.Avg + 
+                 U.C + P.5, family = binomial)
+tidy(model.5) %>%
+  kable(digits=3)
+vif(model.5)
+
+model.6 <- glm(data = data.subset, formula = PB ~ (Pass.Rate + Pass.Yds +
+                 Pass.Int + U.C)^2, family = binomial)
+tidy(model.6) %>%
+  kable(digits=3)
+vif(model.6)
+
+model.7 <- glm(data = data.subset, formula = PB ~ Pass.Rate + Pass.Yds +
+                 Pass.Int + U.C + Pass.Int*Pass.Rate, family = binomial)
+tidy(model.7) %>%
+  kable(digits=3)
+vif(model.7)
+
+
+```
+
+```{r, include = FALSE}
+
+log.model <- glm(data = data.subset, formula = PB ~ Pass.AY.A + TDG + INTG + U.C, family = binomial)
+tidy(log.model) %>%
+  kable(digits = 3)
+
+log.model.2 <- glm(data = data.subset, formula = PB ~ Pass.AY.A + TDG + INTG + U.C + Pass.AY.A*TDG, family = binomial)
+log.model.3 <- glm(data = data.subset, formula = PB ~ Pass.AY.A + TDG + INTG + U.C + TDG*INTG, family = binomial)
+
+anova(log.model, log.model.2, test = "Chisq")
+anova(log.model, log.model.3, test = "Chisq")
+
+
+vif(log.model)
+
+```
+
+
+```{r model}
+
+log.model <- glm(data = data.subset, formula = PB ~ Pass.AY.A +
+                   TDG + INTG + U.C, family = binomial)
+
+full.table <- tidy(log.model, conf.int = T)
+full.table$statistic <- NULL
+full.table$std.error <- NULL
+full.table$p.value <- c("**0.001**", "**0.013**", 0.137, 0.141, "**<0.001**")
+full.table$term <- c("Intercept", "Adjusted Passing Yards per Game", "Touchdowns per Game", "Interceptions per Game", "Under Conract = Yes")
+full.table$conf.low <- round(full.table$conf.low, digits = 3)
+full.table$conf.high <- round(full.table$conf.high, digits = 3)
+full.table <- full.table %>% tidyr::unite(conf, conf.low:conf.high, sep=", ")
+full.table <- full.table[, c(1, 2, 4, 3)]
+knitr::kable(full.table, col.names = c("Variable", "Coefficient", "95% Confidence Interval", "P-Value"), caption = "Logistic Regression Model Output", digits = 3, format = "markdown", align = "lrrrr") %>%
+  kable_styling(font_size = 8.5, latex_options = c("hold_position"), full_width = FALSE, position = "right")
+
+
+```
+
+
+
+\pagebreak
+
+# 4 Discussion
+
+## 4.1 Conclusion
+
+## 4.2 Limitations and Future Work
+
+## 4.3 Summary
+
+\pagebreak 
+
+# Appendix 
+
+## A1 New Correlation Matrix 
+
+```{r corrplot-2}
+
+data.model <- data.subset[, c("Pass.AY.A",
+                              "TDG", "INTG", "U.C")]
+mat <- cor(data.model)
+
+colnames(mat) <- c("Adj. Yards per Att", 
+                   "TD per Game", "INT per Game", "Under Contract?")
+
+rownames(mat) <- c("Adj. Yards per Att", 
+                   "TD per Game", "INT per Game", "Under Contract?")
+
+corrplot(mat, method = "number",type = "upper", 
+         tl.col="black", tl.cex=0.8, tl.srt=70,
+         mar=c(0,0,2,0))
+
+
+```
+
+## A2 Alternative 1 - Modeling Number of Years on NFL Payroll
+
+```{r}
+
+model.2 <- lm(data = data.subset, formula = Years.on.Payroll ~ Pass.AY.A +
+                   TDG + INTG + U.C, family = binomial)
+
+full.table <- tidy(model.2, conf.int = T)
+full.table$statistic <- NULL
+full.table$std.error <- NULL
+full.table$p.value <- c(0.304, 0.776, 0.408, 0.433, "**0.000**")
+full.table$term <- c("Intercept", "Adjusted Passing Yards per Game", "Touchdowns per Game", "Interceptions per Game", "Under Conract = Yes")
+full.table$conf.low <- round(full.table$conf.low, digits = 3)
+full.table$conf.high <- round(full.table$conf.high, digits = 3)
+full.table <- full.table %>% tidyr::unite(conf, conf.low:conf.high, sep=", ")
+full.table <- full.table[, c(1, 2, 4, 3)]
+knitr::kable(full.table, col.names = c("Variable", "Coefficient", "95% Confidence Interval", "P-Value"), digits = 3, format = "markdown", align = "lrrrr") %>%
+  kable_styling(font_size = 8.5, latex_options = c("hold_position"), full_width = FALSE, position = "right")
+
+```
+
+
+## A3 Alternative 2 - Modeling Games Started
+
+```{r}
+
+model.3 <- lm(data = data.subset, formula = Games.Started ~ Pass.AY.A +
+                   TDG + INTG + U.C, family = binomial)
+
+full.table <- tidy(model.3, conf.int = T)
+full.table$statistic <- NULL
+full.table$std.error <- NULL
+full.table$p.value <- c(0.824, 0.629, 0.828, 0.949, "**0.000**")
+full.table$term <- c("Intercept", "Adjusted Passing Yards per Game", "Touchdowns per Game", "Interceptions per Game", "Under Conract = Yes")
+full.table$conf.low <- round(full.table$conf.low, digits = 3)
+full.table$conf.high <- round(full.table$conf.high, digits = 3)
+full.table <- full.table %>% tidyr::unite(conf, conf.low:conf.high, sep=", ")
+full.table <- full.table[, c(1, 2, 4, 3)]
+knitr::kable(full.table, col.names = c("Variable", "Coefficient", "95% Confidence Interval", "P-Value"), digits = 3, format = "markdown", align = "lrrrr") %>%
+  kable_styling(font_size = 8.5, latex_options = c("hold_position"), full_width = FALSE, position = "right")
+
+
+
+```
+
+## A4 Logistic Regression Variance Inflation Factors (VIF)
+
+```{r VIF}
+
+vif <- vif(log.model)
+vif.df <- data.frame(tidy(vif)) %>%
+  mutate(x = round(x, 10))
+vif.df[1] <- c("Adjusted Passing Yards per Game", "TD per Game", "INT per Game", "Under Contract = Yes")
+vif.df %>%
+  rename(Variable = names, `VIF` = x) %>%
+  kable(format = "markdown", align = "r") %>%
+  kable_styling(font_size = 8.5, latex_options = c("hold_position"), full_width = FALSE, position = "right")
+
+
+```
+
+
+
+
+\pagebreak
+
+# References 
+

@@ -1,0 +1,2896 @@
+---
+title: "DSAC NFL Project (Data Cleaning)"
+author: "Rex Evans, Sofia Bliss-Carrascosa, Matthew Murray"
+date: "11/18/2021"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+# libraries
+library(janitor)
+library(dplyr)
+library(tidyverse)
+# library(tidymodels)
+# library(naniar)
+```
+
+**College Football QB Stats by Year (1999-2019)**
+
+Link to the 2005 Data Set (all others are easily accessible from this link):
+
+https://www.sports-reference.com/cfb/years/2005-qbing.html
+
+```{r, include=FALSE}
+
+qb.1999 <- read.csv("1999.passing.stats.csv")
+qb.2000 <- read.csv("2000.passing.stats.csv")
+qb.2001 <- read.csv("2001.passing.stats.csv")
+qb.2002 <- read.csv("2002.passing.stats.csv")
+qb.2003 <- read.csv("2003.passing.stats.csv")
+qb.2004 <- read.csv("2004.passing.stats.csv")
+qb.2005 <- read.csv("2005.passing.stats.csv")
+qb.2006 <- read.csv("2006.passing.stats.csv")
+qb.2007 <- read.csv("2007.passing.stats.csv")
+qb.2008 <- read.csv("2008.passing.stats.csv")
+qb.2009 <- read.csv("2009.passing.stats.csv")
+qb.2010 <- read.csv("2010.passing.stats.csv")
+qb.2011 <- read.csv("2011.passing.stats.csv")
+qb.2012 <- read.csv("2012.passing.stats.csv")
+qb.2013 <- read.csv("2013.passing.stats.csv")
+qb.2014 <- read.csv("2014.passing.stats.csv")
+qb.2015 <- read.csv("2015.passing.stats.csv")
+qb.2016 <- read.csv("2016.passing.stats.csv")
+qb.2017 <- read.csv("2017.passing.stats.csv")
+qb.2018 <- read.csv("2018.passing.stats.csv")
+qb.2019 <- read.csv("2019.passing.stats.csv")
+
+```
+
+**Data Cleaning**
+
+```{r}
+
+# Steps
+   # 1. Make first row the column name
+   # 2. Eliminate Rk column
+   # 3. Rename columns to deal with duplicate column names
+   # 4. Add new column to indicate year
+      # Repeat 1-4 for all data frames 
+   # 5. rbind() all data sets together 
+
+qb.1999 <- qb.1999 %>%
+  row_to_names(row_number = 1)
+qb.1999$Rk <- NULL
+colnames(qb.1999) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.1999$Year <- 1999
+
+qb.2000 <- qb.2000 %>%
+  row_to_names(row_number = 1)
+qb.2000$Rk <- NULL
+colnames(qb.2000) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.2000$Year <- 2000
+
+qb.2001 <- qb.2001 %>%
+  row_to_names(row_number = 1)
+qb.2001$Rk <- NULL
+colnames(qb.2001) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.2001$Year <- 2001
+
+qb.2002 <- qb.2002 %>%
+  row_to_names(row_number = 1)
+qb.2002$Rk <- NULL
+colnames(qb.2002) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.2002$Year <- 2002
+
+qb.2003 <- qb.2003 %>%
+  row_to_names(row_number = 1)
+qb.2003$Rk <- NULL
+colnames(qb.2003) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.2003$Year <- 2003
+
+qb.2004 <- qb.2004 %>%
+  row_to_names(row_number = 1)
+qb.2004$Rk <- NULL
+colnames(qb.2004) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.2004$Year <- 2004
+
+qb.2005 <- qb.2005 %>%
+  row_to_names(row_number = 1)
+qb.2005$Rk <- NULL
+colnames(qb.2005) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.2005$Year <- 2005
+
+qb.2006 <- qb.2006 %>%
+  row_to_names(row_number = 1)
+qb.2006$Rk <- NULL
+colnames(qb.2006) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.2006$Year <- 2006
+
+qb.2007 <- qb.2007 %>%
+  row_to_names(row_number = 1)
+qb.2007$Rk <- NULL
+colnames(qb.2007) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.2007$Year <- 2007
+
+qb.2008 <- qb.2008 %>%
+  row_to_names(row_number = 1)
+qb.2008$Rk <- NULL
+colnames(qb.2008) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.2008$Year <- 2008
+
+qb.2009 <- qb.2009 %>%
+  row_to_names(row_number = 1)
+qb.2009$Rk <- NULL
+colnames(qb.2009) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.2009$Year <- 2009
+  
+qb.2010 <- qb.2010 %>%
+  row_to_names(row_number = 1)
+qb.2010$Rk <- NULL
+colnames(qb.2010) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.2010$Year <- 2010
+
+qb.2011 <- qb.2011 %>%
+  row_to_names(row_number = 1)
+qb.2011$Rk <- NULL
+colnames(qb.2011) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.2011$Year <- 2011
+
+qb.2012 <- qb.2012 %>%
+  row_to_names(row_number = 1)
+qb.2012$Rk <- NULL
+colnames(qb.2012) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.2012$Year <- 2012
+
+qb.2013 <- qb.2013 %>%
+  row_to_names(row_number = 1)
+qb.2013$Rk <- NULL
+colnames(qb.2013) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.2013$Year <- 2013
+
+qb.2014 <- qb.2014 %>%
+  row_to_names(row_number = 1)
+qb.2014$Rk <- NULL
+colnames(qb.2014) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.2014$Year <- 2014
+
+qb.2015 <- qb.2015 %>%
+  row_to_names(row_number = 1)
+qb.2015$Rk <- NULL
+colnames(qb.2015) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.2015$Year <- 2015
+
+qb.2016 <- qb.2016 %>%
+  row_to_names(row_number = 1)
+qb.2016$Rk <- NULL
+colnames(qb.2016) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.2016$Year <- 2016
+
+qb.2017 <- qb.2017 %>%
+  row_to_names(row_number = 1)
+qb.2017$Rk <- NULL
+colnames(qb.2017) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.2017$Year <- 2017
+
+qb.2018 <- qb.2018 %>%
+  row_to_names(row_number = 1)
+qb.2018$Rk <- NULL
+colnames(qb.2018) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.2018$Year <- 2018
+
+qb.2019 <- qb.2019 %>%
+  row_to_names(row_number = 1)
+qb.2019$Rk <- NULL
+colnames(qb.2019) <- c("Player", "School", "Conf", "G", "Pass.Cmp", "Pass.Att", "Pass.Pct", "Pass.Yds", "Pass.Y.A", "Pass.AY.A", "Pass.TD", "Pass.Int", "Pass.Rate", "Rush.Att", "Rush.Yds", "Rush.Avg", "Rush.TD")
+qb.2019$Year <- 2019
+
+ncaa.data <- rbind(qb.1999, qb.2000, qb.2001, qb.2002, qb.2003, qb.2004, qb.2005, qb.2006, qb.2007, qb.2008, qb.2009, qb.2010, qb.2011, qb.2012, qb.2013, qb.2014, qb.2015, qb.2016, qb.2017, qb.2018, qb.2019)
+
+```
+
+```{r}
+
+# Remove asterik's from certain names
+
+library(stringr)
+ncaa.data$Player <- stringr::str_replace(ncaa.data$Player, "\\*", "")
+
+```
+
+```{r}
+
+ncaa.data %>%
+  group_by(Conf, Year) %>%
+  summarise(Mean.Pass.Pct = mean(as.numeric(Pass.Pct)))
+
+```
+
+```{r}
+write.csv(ncaa.data, 'ncaa.data.csv', row.names=FALSE) 
+```
+
+```{r}
+
+# Games
+ncaa.data$G <- as.numeric(ncaa.data$G)
+G <- summarise_at(group_by(ncaa.data, Player), vars(G), funs(sum))[2]
+
+# Pass.Cmp
+ncaa.data$Pass.Cmp <- as.numeric(ncaa.data$Pass.Cmp)
+Pass.Cmp <- summarise_at(group_by(ncaa.data, Player), vars(Pass.Cmp), funs(sum))[2]
+
+# Pass.Att
+ncaa.data$Pass.Att <- as.numeric(ncaa.data$Pass.Att)
+Pass.Att <- summarise_at(group_by(ncaa.data, Player), vars(Pass.Att), funs(sum))[2]
+
+# Pass.Pct
+ncaa.data$Pass.Pct <- as.numeric(ncaa.data$Pass.Pct)
+Pass.Pct <- summarise_at(group_by(ncaa.data, Player), vars(Pass.Pct), funs(mean))[2]
+
+# Pass.Yds
+ncaa.data$Pass.Yds <- as.numeric(ncaa.data$Pass.Yds)
+Pass.Yds <- summarise_at(group_by(ncaa.data, Player), vars(Pass.Yds), funs(sum))[2]
+
+# Pass.Y.A
+ncaa.data$Pass.Y.A <- as.numeric(ncaa.data$Pass.Y.A)
+Pass.Y.A <- summarise_at(group_by(ncaa.data, Player), vars(Pass.Y.A), funs(mean))[2]
+
+# Pass.AY.A
+ncaa.data$Pass.AY.A <- as.numeric(ncaa.data$Pass.AY.A)
+Pass.AY.A <- summarise_at(group_by(ncaa.data, Player), vars(Pass.AY.A), funs(mean))[2]
+
+# Pass.TD
+ncaa.data$Pass.TD <- as.numeric(ncaa.data$Pass.TD)
+Pass.TD <- summarise_at(group_by(ncaa.data, Player), vars(Pass.TD), funs(sum))[2]
+
+# Pass.Int
+ncaa.data$Pass.Int <- as.numeric(ncaa.data$Pass.Int)
+Pass.Int <- summarise_at(group_by(ncaa.data, Player), vars(Pass.Int), funs(sum))[2]
+
+# Pass.Rate
+ncaa.data$Pass.Rate <- as.numeric(ncaa.data$Pass.Rate)
+Pass.Rate <- summarise_at(group_by(ncaa.data, Player), vars(Pass.Rate), funs(mean))[2]
+
+# Rush.Att
+ncaa.data$Rush.Att <- as.numeric(ncaa.data$Rush.Att)
+Rush.Att <- summarise_at(group_by(ncaa.data, Player), vars(Rush.Att), funs(sum))[2]
+
+# Rush.Yds
+ncaa.data$Rush.Yds <- as.numeric(ncaa.data$Rush.Yds)
+Rush.Yds <- summarise_at(group_by(ncaa.data, Player), vars(Rush.Yds), funs(sum))[2]
+
+# Rush.Avg
+ncaa.data$Rush.Avg <- as.numeric(ncaa.data$Rush.Avg)
+Rush.Avg <- summarise_at(group_by(ncaa.data, Player), vars(Rush.Avg), funs(mean))[2]
+
+# Rush.TD
+ncaa.data$Rush.TD <- as.numeric(ncaa.data$Rush.TD)
+Rush.TD <- summarise_at(group_by(ncaa.data, Player), vars(Rush.TD), funs(sum))[2]
+
+```
+
+```{r}
+
+ncaa.data.2 <- ncaa.data[1:3]
+ncaa.data.2 <- with(ncaa.data.2, ncaa.data.2[order(Player) , ])
+ncaa.data.2 <- ncaa.data.2[!duplicated(ncaa.data.2[1]),]
+
+```
+
+```{r}
+
+ncaa.data.3 <- cbind(ncaa.data.2, G, Pass.Cmp, Pass.Att, Pass.Pct, Pass.Yds, Pass.Y.A, Pass.AY.A, Pass.TD, Pass.Int, Pass.Rate, Rush.Att, Rush.Yds, Rush.Avg, Rush.TD)
+
+```
+
+** Creating a Variable For Year Drafted **
+
+```{r}
+
+ncaa.data.3$Year.Drafted <- rep('N/A', 1131)
+df <- ncaa.data.3
+
+```
+
+
+** Imputing the Year Drafted for QB's (if Drafted at all) **
+
+```{r}
+# Syntax 
+# df["rowName", "columnName"] <- value
+
+# Example
+df[df$Player == "Brady Quinn", "Year.Drafted"] <- 2007
+df[df$Player == "Kyler Murray", "Year.Drafted"] <- 2019
+df[df$Player == "Daniel Jones", "Year.Drafted"] <- 2019
+df[df$Player == "Dwayne Haskins", "Year.Drafted"] <- 2019
+df[df$Player == "Drew Lock", "Year.Drafted"] <- 2019
+df[df$Player == "Will Grier", "Year.Drafted"] <- 2019
+df[df$Player == "Ryan Finley", "Year.Drafted"] <- 2019
+df[df$Player == "Jarrett Stidham", "Year.Drafted"] <- 2019
+df[df$Player == "Easton Stick", "Year.Drafted"] <- 2019
+df[df$Player == "Clayton Thorson", "Year.Drafted"] <- 2019
+df[df$Player == "Gardner Minshew", "Year.Drafted"] <- 2019
+df[df$Player == "Trace McSorley", "Year.Drafted"] <- 2019
+df[df$Player == "Baker Mayfield", "Year.Drafted"] <- 2018
+df[df$Player == "Sam Darnold", "Year.Drafted"] <- 2018
+df[df$Player == "Josh Allen", "Year.Drafted"] <- 2018
+df[df$Player == "Josh Rosen", "Year.Drafted"] <- 2018
+df[df$Player == "Lamar Jackson", "Year.Drafted"] <- 2018
+df[df$Player == "Mason Rudolph", "Year.Drafted"] <- 2018
+df[df$Player == "Kyle Lauletta", "Year.Drafted"] <- 2018
+df[df$Player == "Mike White", "Year.Drafted"] <- 2018
+df[df$Player == "Luke Falk", "Year.Drafted"] <- 2018
+df[df$Player == "Tanner Lee", "Year.Drafted"] <- 2018
+df[df$Player == "Danny Etling", "Year.Drafted"] <- 2018
+df[df$Player == "Alex Mcgough", "Year.Drafted"] <- 2018
+df[df$Player == "Logan Woodside", "Year.Drafted"] <- 2018
+df[df$Player == "Mitchell Trubisky", "Year.Drafted"] <- 2017
+df[df$Player == "Patrick Mahomes", "Year.Drafted"] <- 2017
+df[df$Player == "Deshaun Watson", "Year.Drafted"] <- 2017
+df[df$Player == "DeShone Kizer", "Year.Drafted"] <- 2017
+df[df$Player == "Davis Webb", "Year.Drafted"] <- 2017
+df[df$Player == "C.J. Beathard", "Year.Drafted"] <- 2017
+df[df$Player == "Joshua Dobbs", "Year.Drafted"] <- 2017
+df[df$Player == "Nathan Peterman", "Year.Drafted"] <- 2017
+df[df$Player == "Brad Kaaya", "Year.Drafted"] <- 2017
+df[df$Player == "Chad Kelly", "Year.Drafted"] <- 2017
+df[df$Player == "Jared Goff", "Year.Drafted"] <- 2016
+df[df$Player == "Carson Wentz", "Year.Drafted"] <- 2016
+df[df$Player == "Paxton Lynch", "Year.Drafted"] <- 2016
+df[df$Player == "Christian Hackenberg", "Year.Drafted"] <- 2016
+df[df$Player == "Jacoby Brissett", "Year.Drafted"] <- 2016
+df[df$Player == "Cody Kessler", "Year.Drafted"] <- 2016
+df[df$Player == "Connor Cook", "Year.Drafted"] <- 2016
+df[df$Player == "Dak Prescott", "Year.Drafted"] <- 2016
+df[df$Player == "Cardale Jones", "Year.Drafted"] <- 2016
+df[df$Player == "Kevin Hogan", "Year.Drafted"] <- 2016
+df[df$Player == "Nate Sudfeld", "Year.Drafted"] <- 2016
+df[df$Player == "Jake Rudock", "Year.Drafted"] <- 2016
+df[df$Player == "Brandon Allen", "Year.Drafted"] <- 2016
+df[df$Player == "Jeff Driskel", "Year.Drafted"] <- 2016
+df[df$Player == "Brandon Doughty", "Year.Drafted"] <- 2016
+df[df$Player == "Jameis Winston", "Year.Drafted"] <- 2015
+df[df$Player == "Marcus Mariota", "Year.Drafted"] <- 2015
+df[df$Player == "Garrett Grayson", "Year.Drafted"] <- 2015
+df[df$Player == "Sean Mannion", "Year.Drafted"] <- 2015
+df[df$Player == "Bryce Petty", "Year.Drafted"] <- 2015
+df[df$Player == "Brett Hundley", "Year.Drafted"] <- 2015
+df[df$Player == "Trevor Siemian", "Year.Drafted"] <- 2015
+df[df$Player == "Blake Bortles", "Year.Drafted"] <- 2014
+df[df$Player == "Johnny Manziel", "Year.Drafted"] <- 2014
+df[df$Player == "Teddy Bridgewater", "Year.Drafted"] <- 2014
+df[df$Player == "Derek Carr", "Year.Drafted"] <- 2014
+df[df$Player == "Jimmy Garappolo", "Year.Drafted"] <- 2014
+df[df$Player == "Logan Thomas", "Year.Drafted"] <- 2014
+df[df$Player == "Tom Savage", "Year.Drafted"] <- 2014
+df[df$Player == "Aaron Murray", "Year.Drafted"] <- 2014
+df[df$Player == "AJ McCarron", "Year.Drafted"] <- 2014
+df[df$Player == "Zach Mettenberger", "Year.Drafted"] <- 2014
+df[df$Player == "David Fales", "Year.Drafted"] <- 2014
+df[df$Player == "Keith Wenning", "Year.Drafted"] <- 2014
+df[df$Player == "Tajh Boyd", "Year.Drafted"] <- 2014
+df[df$Player == "Garrett Gilbert", "Year.Drafted"] <- 2014
+df[df$Player == "EJ Manuel", "Year.Drafted"] <- 2013
+df[df$Player == "Geno Smith", "Year.Drafted"] <- 2013
+df[df$Player == "Mike Glennon", "Year.Drafted"] <- 2013
+df[df$Player == "Matt Barkley", "Year.Drafted"] <- 2013
+df[df$Player == "Ryan Nassib", "Year.Drafted"] <- 2013
+df[df$Player == "Tyler Wilson", "Year.Drafted"] <- 2013
+df[df$Player == "Landry Jones", "Year.Drafted"] <- 2013
+df[df$Player == "Brad Sorensen", "Year.Drafted"] <- 2013
+df[df$Player == "Zac Dysert", "Year.Drafted"] <- 2013
+df[df$Player == "B.J. Daniels", "Year.Drafted"] <- 2013
+df[df$Player == "Sean Renfree", "Year.Drafted"] <- 2013
+df[df$Player == "Andrew Luck", "Year.Drafted"] <- 2012
+df[df$Player == "Robert Griffin III", "Year.Drafted"] <- 2012
+df[df$Player == "Ryan Tannehill", "Year.Drafted"] <- 2012
+df[df$Player == "Brandon Weeden", "Year.Drafted"] <- 2012
+df[df$Player == "Brock Osweiler", "Year.Drafted"] <- 2012
+df[df$Player == "Russell Wilson", "Year.Drafted"] <- 2012
+df[df$Player == "Nick Foles", "Year.Drafted"] <- 2012
+df[df$Player == "Kirk Cousins", "Year.Drafted"] <- 2012
+df[df$Player == "Ryan Lindley", "Year.Drafted"] <- 2012
+df[df$Player == "B.J. Coleman", "Year.Drafted"] <- 2012
+df[df$Player == "Chandler Harnish", "Year.Drafted"] <- 2012
+df[df$Player == "Cam Newton", "Year.Drafted"] <- 2011
+df[df$Player == "Jake Locker", "Year.Drafted"] <- 2011
+df[df$Player == "Blaine Gabbert", "Year.Drafted"] <- 2011
+df[df$Player == "Christian Ponder", "Year.Drafted"] <- 2011
+df[df$Player == "Andy Dalton", "Year.Drafted"] <- 2011
+df[df$Player == "Colin Kaepernick", "Year.Drafted"] <- 2011
+df[df$Player == "Ryan Mallett", "Year.Drafted"] <- 2011
+df[df$Player == "Ricky Stanzi", "Year.Drafted"] <- 2011
+df[df$Player == "T.J. Yates", "Year.Drafted"] <- 2011
+df[df$Player == "Nathan Enderle", "Year.Drafted"] <- 2011
+df[df$Player == "Tyrod Taylor", "Year.Drafted"] <- 2011
+df[df$Player == "Greg McElroy", "Year.Drafted"] <- 2011
+df[df$Player == "Sam Bradford", "Year.Drafted"] <- 2010
+df[df$Player == "Tim Tebow", "Year.Drafted"] <- 2010
+df[df$Player == "Jimmy Clausen", "Year.Drafted"] <- 2010
+df[df$Player == "Colt McCoy", "Year.Drafted"] <- 2010
+df[df$Player == "Michael Kafka", "Year.Drafted"] <- 2010
+df[df$Player == "John Skelton", "Year.Drafted"] <- 2010
+df[df$Player == "Jonathan Crompton", "Year.Drafted"] <- 2010
+df[df$Player == "Rusty Smith", "Year.Drafted"] <- 2010
+df[df$Player == "Dan Lefevour", "Year.Drafted"] <- 2010
+df[df$Player == "Joe Webb", "Year.Drafted"] <- 2010
+df[df$Player == "Tony Pike", "Year.Drafted"] <- 2010
+df[df$Player == "Levi Brown", "Year.Drafted"] <- 2010
+df[df$Player == "Sean Canfield", "Year.Drafted"] <- 2010
+df[df$Player == "Zac Robinson", "Year.Drafted"] <- 2010
+df[df$Player == "Matthew Stafford", "Year.Drafted"] <- 2009
+df[df$Player == "Mark Sanchez", "Year.Drafted"] <- 2009
+df[df$Player == "Josh Freeman", "Year.Drafted"] <- 2009
+df[df$Player == "Pat White", "Year.Drafted"] <- 2009
+df[df$Player == "Stephen McGee", "Year.Drafted"] <- 2009
+df[df$Player == "Rhett Bomar", "Year.Drafted"] <- 2009
+df[df$Player == "Nate Davis", "Year.Drafted"] <- 2009
+df[df$Player == "Tom Brandstater", "Year.Drafted"] <- 2009
+df[df$Player == "Mike Teel", "Year.Drafted"] <- 2009
+df[df$Player == "Keith Null", "Year.Drafted"] <- 2009
+df[df$Player == "Curtis Painter", "Year.Drafted"] <- 2009
+df[df$Player == "Matt Ryan", "Year.Drafted"] <- 2008
+df[df$Player == "Joe Flacco", "Year.Drafted"] <- 2008
+df[df$Player == "Brian Brohm", "Year.Drafted"] <- 2008
+df[df$Player == "Chad Henne", "Year.Drafted"] <- 2008
+df[df$Player == "Kevin O'Connell", "Year.Drafted"] <- 2008
+df[df$Player == "John David Booty", "Year.Drafted"] <- 2008
+df[df$Player == "Dennis Dixon", "Year.Drafted"] <- 2008
+df[df$Player == "Josh Johnson", "Year.Drafted"] <- 2008
+df[df$Player == "Erik Ainge", "Year.Drafted"] <- 2008
+df[df$Player == "Colt Brennan", "Year.Drafted"] <- 2008
+df[df$Player == "Andre Woodson", "Year.Drafted"] <- 2008
+df[df$Player == "Matt Flynn", "Year.Drafted"] <- 2008
+df[df$Player == "Alex Brink", "Year.Drafted"] <- 2008
+df[df$Player == "JaMarcus Russel", "Year.Drafted"] <- 2007
+df[df$Player == "Brady Quinn", "Year.Drafted"] <- 2007
+df[df$Player == "Kevin Kolb", "Year.Drafted"] <- 2007
+df[df$Player == "John Beck", "Year.Drafted"] <- 2007
+df[df$Player == "Drew Stanton", "Year.Drafted"] <- 2007
+df[df$Player == "Trent Edwards", "Year.Drafted"] <- 2007
+df[df$Player == "Isaiah Stanback", "Year.Drafted"] <- 2007
+df[df$Player == "Jeff Rowe", "Year.Drafted"] <- 2007
+df[df$Player == "Troy Smith", "Year.Drafted"] <- 2007
+df[df$Player == "Jordan Palmer", "Year.Drafted"] <- 2007
+df[df$Player == "Tyler Thigpen", "Year.Drafted"] <- 2007
+df[df$Player == "Vince Young", "Year.Drafted"] <- 2006
+df[df$Player == "Matt Leinart", "Year.Drafted"] <- 2006
+df[df$Player == "Jay Cutler", "Year.Drafted"] <- 2006
+df[df$Player == "Kellen Clemens", "Year.Drafted"] <- 2006
+df[df$Player == "Tarvaris Jackson", "Year.Drafted"] <- 2006
+df[df$Player == "Charlie Whitehurst", "Year.Drafted"] <- 2006
+df[df$Player == "Brodie Croyle", "Year.Drafted"] <- 2006
+df[df$Player == "Brad Smith", "Year.Drafted"] <- 2006
+df[df$Player == "Ingle Martin", "Year.Drafted"] <- 2006
+df[df$Player == "Omar Jacobs", "Year.Drafted"] <- 2006
+df[df$Player == "Reggie McNeal", "Year.Drafted"] <- 2006
+df[df$Player == "Bruce Gradkowski", "Year.Drafted"] <- 2006
+df[df$Player == "D.J. Shockley", "Year.Drafted"] <- 2006
+df[df$Player == "Alex Smith", "Year.Drafted"] <- 2005
+df[df$Player == "Aaron Rodgers", "Year.Drafted"] <- 2005
+df[df$Player == "Jason Campbell", "Year.Drafted"] <- 2005
+df[df$Player == "Charlie Frye", "Year.Drafted"] <- 2005
+df[df$Player == "Andrew Walter", "Year.Drafted"] <- 2005
+df[df$Player == "David Greene", "Year.Drafted"] <- 2005
+df[df$Player == "Kyle Orton", "Year.Drafted"] <- 2005
+df[df$Player == "Stefan Lefors", "Year.Drafted"] <- 2005
+df[df$Player == "Dan Orlovsky", "Year.Drafted"] <- 2005
+df[df$Player == "Adrian McPherson", "Year.Drafted"] <- 2005
+df[df$Player == "Derek Anderson", "Year.Drafted"] <- 2005
+df[df$Player == "James Kilian", "Year.Drafted"] <- 2005
+df[df$Player == "Matt Cassel", "Year.Drafted"] <- 2005
+df[df$Player == "Ryan Fitzpatrick", "Year.Drafted"] <- 2005
+df[df$Player == "Eli Manning", "Year.Drafted"] <- 2004
+df[df$Player == "Philip Rivers", "Year.Drafted"] <- 2004
+df[df$Player == "Ben Roethlisberger", "Year.Drafted"] <- 2004
+df[df$Player == "J.P. Losman", "Year.Drafted"] <- 2004
+df[df$Player == "Matt Schaub", "Year.Drafted"] <- 2004
+df[df$Player == "Luke McCown", "Year.Drafted"] <- 2004
+df[df$Player == "Craig Krenzel", "Year.Drafted"] <- 2004
+df[df$Player == "Andy Hall", "Year.Drafted"] <- 2004
+df[df$Player == "Josh Harris", "Year.Drafted"] <- 2004
+df[df$Player == "Jim Sorgi", "Year.Drafted"] <- 2004
+df[df$Player == "Jeff Smoker", "Year.Drafted"] <- 2004
+df[df$Player == "John Navarre", "Year.Drafted"] <- 2004
+df[df$Player == "Cody Pickett", "Year.Drafted"] <- 2004
+df[df$Player == "Casey Bramlet", "Year.Drafted"] <- 2004
+df[df$Player == "Matt Mauck", "Year.Drafted"] <- 2004
+df[df$Player == "B.J. Symons", "Year.Drafted"] <- 2004
+df[df$Player == "Bradlee Van Pelt", "Year.Drafted"] <- 2004
+df[df$Player == "Carson Palmer", "Year.Drafted"] <- 2003
+df[df$Player == "Byron Leftwich", "Year.Drafted"] <- 2003
+df[df$Player == "Kyle Boller", "Year.Drafted"] <- 2003
+df[df$Player == "Rex Grossman", "Year.Drafted"] <- 2003
+df[df$Player == "Dave Ragone", "Year.Drafted"] <- 2003
+df[df$Player == "Chris Simms", "Year.Drafted"] <- 2003
+df[df$Player == "Seneca Wallace", "Year.Drafted"] <- 2003
+df[df$Player == "Brian St. Pierre", "Year.Drafted"] <- 2003
+df[df$Player == "Drew Henson", "Year.Drafted"] <- 2003
+df[df$Player == "Brooks Bollinger", "Year.Drafted"] <- 2003
+df[df$Player == "Kliff Kingsbury", "Year.Drafted"] <- 2003
+df[df$Player == "Gibran Hamdan", "Year.Drafted"] <- 2003
+df[df$Player == "Ken Dorsey", "Year.Drafted"] <- 2003
+df[df$Player == "David Carr", "Year.Drafted"] <- 2002
+df[df$Player == "Joey Harrington", "Year.Drafted"] <- 2002
+df[df$Player == "Patrick Ramsey", "Year.Drafted"] <- 2002
+df[df$Player == "Josh McCown", "Year.Drafted"] <- 2002
+df[df$Player == "David Garrard", "Year.Drafted"] <- 2002
+df[df$Player == "Rohan Davey", "Year.Drafted"] <- 2002
+df[df$Player == "Randy Fasani", "Year.Drafted"] <- 2002
+df[df$Player == "Kurt Kittner", "Year.Drafted"] <- 2002
+df[df$Player == "Brandon Doman", "Year.Drafted"] <- 2002
+df[df$Player == "Craig Nall", "Year.Drafted"] <- 2002
+df[df$Player == "J.T. O'Sullivan", "Year.Drafted"] <- 2002
+df[df$Player == "Steve Bellisari", "Year.Drafted"] <- 2002
+df[df$Player == "Seth Burford", "Year.Drafted"] <- 2002
+df[df$Player == "Jeff Kelly", "Year.Drafted"] <- 2002
+df[df$Player == "Wes Pate", "Year.Drafted"] <- 2002
+df[df$Player == "Michael Vick", "Year.Drafted"] <- 2001
+df[df$Player == "Drew Brees", "Year.Drafted"] <- 2001
+df[df$Player == "Quincy Carter", "Year.Drafted"] <- 2001
+df[df$Player == "Marques Tuiasosopo", "Year.Drafted"] <- 2001
+df[df$Player == "Chris Weinke", "Year.Drafted"] <- 2001
+df[df$Player == "Sage Rosenfels", "Year.Drafted"] <- 2001
+df[df$Player == "Jesse Palmer", "Year.Drafted"] <- 2001
+df[df$Player == "Mike McMahon", "Year.Drafted"] <- 2001
+df[df$Player == "A.J. Feeley", "Year.Drafted"] <- 2001
+df[df$Player == "Josh Booty", "Year.Drafted"] <- 2001
+df[df$Player == "Josh Heupel", "Year.Drafted"] <- 2001
+df[df$Player == "Chad Pennington", "Year.Drafted"] <- 2000
+df[df$Player == "Giovanni Carmazzi", "Year.Drafted"] <- 2000
+df[df$Player == "Chris Redman", "Year.Drafted"] <- 2000
+df[df$Player == "Tee Martin", "Year.Drafted"] <- 2000
+df[df$Player == "Marc Bulger", "Year.Drafted"] <- 2000
+df[df$Player == "Spergon Wynn", "Year.Drafted"] <- 2000
+df[df$Player == "Tom Brady", "Year.Drafted"] <- 2000
+df[df$Player == "Todd Husak", "Year.Drafted"] <- 2000
+df[df$Player == "JaJuan Seider", "Year.Drafted"] <- 2000
+df[df$Player == "Tim Rattay", "Year.Drafted"] <- 2000
+df[df$Player == "Jarious Jackson", "Year.Drafted"] <- 2000
+df[df$Player == "Joe Hamilton", "Year.Drafted"] <- 2000
+df[df$Player == "Tim Couch", "Year.Drafted"] <- 1999
+df[df$Player == "Donovan McNabb", "Year.Drafted"] <- 1999
+df[df$Player == "Akili Smith", "Year.Drafted"] <- 1999
+df[df$Player == "Daunte Culpepper", "Year.Drafted"] <- 1999
+df[df$Player == "Cade McNown", "Year.Drafted"] <- 1999
+df[df$Player == "Shaun King", "Year.Drafted"] <- 1999
+df[df$Player == "Brock Huard", "Year.Drafted"] <- 1999
+df[df$Player == "Joe Germaine", "Year.Drafted"] <- 1999
+df[df$Player == "Aaron Brooks", "Year.Drafted"] <- 1999
+df[df$Player == "Kevin Daft", "Year.Drafted"] <- 1999
+df[df$Player == "Michael Bishop", "Year.Drafted"] <- 1999
+df[df$Player == "Chris Griesen", "Year.Drafted"] <- 1999
+df[df$Player == "Scott Covington", "Year.Drafted"] <- 1999
+df[df$Player == "Case Keenum", "Year.Drafted"] <- "UDFA"
+df[df$Player == "Kellen Moore", "Year.Drafted"] <- "UDFA"
+df[df$Player == "Graham Harrell", "Year.Drafted"] <- "UDFA"
+df[df$Player == "J.T. Barrett", "Year.Drafted"] <- "UDFA"	
+df[df$Player == "Chase Daniel", "Year.Drafted"] <- "UDFA"	
+df[df$Player == "Brandon Doughty", "Year.Drafted"] <- 2016	
+
+```
+
+```{r}
+
+df.drafted <- df[which(df$Year.Drafted != "N/A"), "Player"]
+df.drafted = data.frame(df.drafted)
+
+```
+
+```{r}
+
+df["Draft.Round"] <- "N/A"
+df["Years.on.Payroll"] <- "N/A"
+df["Games.Started"] <- "N/A"
+df["Under.Contract"] <- "No"
+
+```
+
+```{r}
+
+# J.T. Barrett
+# https://www.pro-football-reference.com/players/B/BarrJ.00.htm
+df[df$Player == "J.T. Barrett", "Draft.Round"] <- "UDFA"
+df[df$Player == "J.T. Barrett", "Years.on.Payroll"] <- 0
+df[df$Player == "J.T. Barrett", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Graham Harrell
+# https://www.pro-football-reference.com/players/H/HarrGr00.htm
+df[df$Player == "Graham Harrell", "Draft.Round"] <- "UDFA"
+df[df$Player == "Graham Harrell", "Years.on.Payroll"] <- 1
+df[df$Player == "Graham Harrell", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Chase Daniel
+# https://www.pro-football-reference.com/players/D/DaniCh00.htm
+df[df$Player == "Chase Daniel", "Draft.Round"] <- "UDFA"
+df[df$Player == "Chase Daniel", "Years.on.Payroll"] <- 12
+df[df$Player == "Chase Daniel", "Games.Started"] <- 5
+
+```
+
+```{r}
+
+# Kellen Moore
+# https://www.pro-football-reference.com/players/M/MoorKe02.htm
+df[df$Player == "Kellen Moore", "Draft.Round"] <- "UDFA"
+df[df$Player == "Kellen Moore", "Years.on.Payroll"] <- 1
+df[df$Player == "Kellen Moore", "Games.Started"] <- 2
+
+```
+
+```{r}
+
+# Brandon Doughty
+# https://en.wikipedia.org/wiki/Brandon_Doughty#Professional_career
+df[df$Player == "Brandon Doughty", "Draft.Round"] <- 7
+df[df$Player == "Brandon Doughty", "Years.on.Payroll"] <- 0
+df[df$Player == "Brandon Doughty", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# A.J. Feeley
+# https://www.pro-football-reference.com/players/F/FeelA.00.htm
+df[df$Player == "A.J. Feeley", "Draft.Round"] <- 5
+df[df$Player == "A.J. Feeley", "Years.on.Payroll"] <- 6
+df[df$Player == "A.J. Feeley", "Games.Started"] <- 18
+
+```
+
+```{r}
+
+# Aaron Murray
+# https://www.pro-football-reference.com/players/M/MurrAa00.htm
+df[df$Player == "Aaron Murray", "Draft.Round"] <- 5
+df[df$Player == "Aaron Murray", "Years.on.Payroll"] <- 0
+df[df$Player == "Aaron Murray", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Aaron Rodgers
+# https://www.pro-football-reference.com/players/R/RodgAa00.htm
+df[df$Player == "Aaron Rodgers", "Draft.Round"] <- 1
+df[df$Player == "Aaron Rodgers", "Years.on.Payroll"] <- 17
+df[df$Player == "Aaron Rodgers", "Games.Started"] <- 199
+df[df$Player == "Aaron Rodgers", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Alex Brink
+# https://www.pro-football-reference.com/players/B/BrinAl00.htm
+df[df$Player == "Alex Brink", "Draft.Round"] <- 7
+df[df$Player == "Alex Brink", "Years.on.Payroll"] <- 0
+df[df$Player == "Alex Brink", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Alex Smith
+# https://www.pro-football-reference.com/players/S/SmitAl03.htm
+df[df$Player == "Alex Smith", "Draft.Round"] <- 1
+df[df$Player == "Alex Smith", "Years.on.Payroll"] <- 14
+df[df$Player == "Alex Smith", "Games.Started"] <- 167
+
+```
+
+```{r}
+
+# Andre Woodson
+# https://www.pro-football-reference.com/players/W/WoodAn00.htm
+df[df$Player == "Andre Woodson", "Draft.Round"] <- 6
+df[df$Player == "Andre Woodson", "Years.on.Payroll"] <- 0
+df[df$Player == "Andre Woodson", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Andrew Luck
+# https://www.pro-football-reference.com/players/L/LuckAn00.htm
+df[df$Player == "Andrew Luck", "Draft.Round"] <- 1
+df[df$Player == "Andrew Luck", "Years.on.Payroll"] <- 6
+df[df$Player == "Andrew Luck", "Games.Started"] <- 86
+
+```
+
+```{r}
+
+# Andrew Walter
+# https://www.pro-football-reference.com/players/W/WaltAn00.htm
+df[df$Player == "Andrew Walter", "Draft.Round"] <- 3
+df[df$Player == "Andrew Walter", "Years.on.Payroll"] <- 3
+df[df$Player == "Andrew Walter", "Games.Started"] <- 9
+
+```
+
+```{r}
+
+# Andy Dalton
+# https://www.pro-football-reference.com/players/D/DaltAn00.htm
+df[df$Player == "Andy Dalton", "Draft.Round"] <- 2
+df[df$Player == "Andy Dalton", "Years.on.Payroll"] <- 11
+df[df$Player == "Andy Dalton", "Games.Started"] <- 144
+df[df$Player == "Andy Dalton", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# B.J. Daniels
+# https://www.pro-football-reference.com/players/D/DaniB.00.htm
+df[df$Player == "B.J. Daniels", "Draft.Round"] <- 7
+df[df$Player == "B.J. Daniels", "Years.on.Payroll"] <- 1
+df[df$Player == "B.J. Daniels", "Games.Started"] <- 0
+
+```
+
+
+```{r}
+
+# B.J. Symons
+# https://en.wikipedia.org/wiki/B._J._Symons
+df[df$Player == "B.J. Symons", "Draft.Round"] <- 7
+df[df$Player == "B.J. Symons", "Years.on.Payroll"] <- 0
+df[df$Player == "B.J. Symons", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Baker Mayfield
+# https://www.pro-football-reference.com/players/M/MayfBa00.htm
+df[df$Player == "Baker Mayfield", "Draft.Round"] <- 1
+df[df$Player == "Baker Mayfield", "Years.on.Payroll"] <- 4
+df[df$Player == "Baker Mayfield", "Games.Started"] <- 54
+df[df$Player == "Baker Mayfield", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Ben Roethlisberger
+# https://www.pro-football-reference.com/players/R/RoetBe00.htm
+df[df$Player == "Ben Roethlisberger", "Draft.Round"] <- 1
+df[df$Player == "Ben Roethlisberger", "Years.on.Payroll"] <- 18
+df[df$Player == "Ben Roethlisberger", "Games.Started"] <- 239
+df[df$Player == "Ben Roethlisberger", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Blaine Gabbert
+# https://www.pro-football-reference.com/players/G/GabbBl00.htm
+df[df$Player == "Blaine Gabbert", "Draft.Round"] <- 1
+df[df$Player == "Blaine Gabbert", "Years.on.Payroll"] <- 10
+df[df$Player == "Blaine Gabbert", "Games.Started"] <- 48
+df[df$Player == "Blaine Gabbert", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Blake Bortles
+# https://www.pro-football-reference.com/players/B/BortBl00.htm
+df[df$Player == "Blake Bortles", "Draft.Round"] <- 1
+df[df$Player == "Blake Bortles", "Years.on.Payroll"] <- 6
+df[df$Player == "Blake Bortles", "Games.Started"] <- 73
+
+```
+
+```{r}
+
+# Brad Kaaya
+# https://www.pro-football-reference.com/players/K/KaayBr00.htm
+df[df$Player == "Brad Kaaya", "Draft.Round"] <- 6
+df[df$Player == "Brad Kaaya", "Years.on.Payroll"] <- 0
+df[df$Player == "Brad Kaaya", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Brad Smith
+# https://www.pro-football-reference.com/players/S/SmitBr01.htm
+df[df$Player == "Brad Smith", "Draft.Round"] <- 4
+df[df$Player == "Brad Smith", "Years.on.Payroll"] <- 9
+df[df$Player == "Brad Smith", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Bradlee Van Pelt
+# https://www.pro-football-reference.com/players/V/VanPBr00.htm
+df[df$Player == "Bradlee Van Pelt", "Draft.Round"] <- 7
+df[df$Player == "Bradlee Van Pelt", "Years.on.Payroll"] <- 1
+df[df$Player == "Bradlee Van Pelt", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Brady Quinn
+# https://www.pro-football-reference.com/players/Q/QuinBr00.htm
+df[df$Player == "Brady Quinn", "Draft.Round"] <- 1
+df[df$Player == "Brady Quinn", "Years.on.Payroll"] <- 4
+df[df$Player == "Brady Quinn", "Games.Started"] <- 20
+
+```
+
+```{r}
+
+# Brandon Allen
+# https://www.pro-football-reference.com/players/A/AlleBr00.htm
+df[df$Player == "Brandon Allen", "Draft.Round"] <- 6
+df[df$Player == "Brandon Allen", "Years.on.Payroll"] <- 3
+df[df$Player == "Brandon Allen", "Games.Started"] <- 8
+
+```
+
+```{r}
+
+# Brandon Doman
+# https://en.wikipedia.org/wiki/Brandon_Doman
+df[df$Player == "Brandon Doman", "Draft.Round"] <- 5
+df[df$Player == "Brandon Doman", "Years.on.Payroll"] <- 0
+df[df$Player == "Brandon Doman", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Brandon Doughty
+# https://www.pro-football-reference.com/players/D/DougBr00.htm
+df[df$Player == "Brandon Doughty", "Draft.Round"] <- 7
+df[df$Player == "Brandon Doughty", "Years.on.Payroll"] <- 0
+df[df$Player == "Brandon Doughty", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Brandon Weeden
+# https://www.pro-football-reference.com/players/W/WeedBr00.htm
+df[df$Player == "Brandon Weeden", "Draft.Round"] <- 1
+df[df$Player == "Brandon Weeden", "Years.on.Payroll"] <- 5
+df[df$Player == "Brandon Weeden", "Games.Started"] <- 25
+
+```
+
+```{r}
+
+# Brett Hundley
+# https://www.pro-football-reference.com/players/H/HundBr00.htm
+df[df$Player == "Brett Hundley", "Draft.Round"] <- 5
+df[df$Player == "Brett Hundley", "Years.on.Payroll"] <- 3
+df[df$Player == "Brett Hundley", "Games.Started"] <- 9
+
+```
+
+```{r}
+
+# Brian Brohm
+# https://www.pro-football-reference.com/players/B/BrohBr00.htm
+df[df$Player == "Brian Brohm", "Draft.Round"] <- 2
+df[df$Player == "Brian Brohm", "Years.on.Payroll"] <- 2
+df[df$Player == "Brian Brohm", "Games.Started"] <- 2
+
+```
+
+```{r}
+
+# Brian St. Pierre
+# https://www.pro-football-reference.com/players/S/St.PBr20.htm
+df[df$Player == "Brian St. Pierre", "Draft.Round"] <- 5
+df[df$Player == "Brian St. Pierre", "Years.on.Payroll"] <- 3
+df[df$Player == "Brian St. Pierre", "Games.Started"] <- 1
+
+```
+
+```{r}
+
+# Brock Osweiler 
+# https://www.pro-football-reference.com/players/O/OsweBr00.htm
+df[df$Player == "Brock Osweiler", "Draft.Round"] <- 2
+df[df$Player == "Brock Osweiler", "Years.on.Payroll"] <- 7
+df[df$Player == "Brock Osweiler", "Games.Started"] <- 30
+
+```
+
+```{r}
+
+# Brodie Croyle
+# https://www.pro-football-reference.com/players/C/CroyBr00.htm
+df[df$Player == "Brodie Croyle", "Draft.Round"] <- 3
+df[df$Player == "Brodie Croyle", "Years.on.Payroll"] <- 5
+df[df$Player == "Brodie Croyle", "Games.Started"] <- 10
+
+```
+
+```{r}
+
+# Brooks Bollinger
+# https://www.pro-football-reference.com/players/B/BollBr00.htm
+df[df$Player == "Brooks Bollinger", "Draft.Round"] <- 6
+df[df$Player == "Brooks Bollinger", "Years.on.Payroll"] <- 5
+df[df$Player == "Brooks Bollinger", "Games.Started"] <- 10
+
+```
+
+```{r}
+
+# Bruce Gradkowski
+# https://www.pro-football-reference.com/players/G/GradBr00.htm
+df[df$Player == "Bruce Gradkowski", "Draft.Round"] <- 6
+df[df$Player == "Bruce Gradkowski", "Years.on.Payroll"] <- 8
+df[df$Player == "Bruce Gradkowski", "Games.Started"] <- 20
+
+```
+
+
+```{r}
+
+# Bryce Petty
+# https://www.pro-football-reference.com/players/P/PettBr01.htm
+df[df$Player == "Bryce Petty", "Draft.Round"] <- 4
+df[df$Player == "Bryce Petty", "Years.on.Payroll"] <- 2
+df[df$Player == "Bryce Petty", "Games.Started"] <- 7
+
+```
+
+```{r}
+
+# Byron Leftwich
+# https://www.pro-football-reference.com/players/L/LeftBy00.htm
+df[df$Player == "Byron Leftwich", "Draft.Round"] <- 1
+df[df$Player == "Byron Leftwich", "Years.on.Payroll"] <- 9
+df[df$Player == "Byron Leftwich", "Games.Started"] <- 50
+
+```
+
+```{r}
+
+# C.J. Beathard
+# https://www.pro-football-reference.com/players/B/BeatC.00.htm
+df[df$Player == "C.J. Beathard", "Draft.Round"] <- 3
+df[df$Player == "C.J. Beathard", "Years.on.Payroll"] <- 4
+df[df$Player == "C.J. Beathard", "Games.Started"] <- 12
+df[df$Player == "C.J. Beathard", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Cam Newton
+# https://www.pro-football-reference.com/players/N/NewtCa00.htm
+df[df$Player == "Cam Newton", "Draft.Round"] <- 1
+df[df$Player == "Cam Newton", "Years.on.Payroll"] <- 11
+df[df$Player == "Cam Newton", "Games.Started"] <- 139
+df[df$Player == "Cam Newton", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Carson Palmer
+# https://www.pro-football-reference.com/players/P/PalmCa00.htm
+df[df$Player == "Carson Palmer", "Draft.Round"] <- 1
+df[df$Player == "Carson Palmer", "Years.on.Payroll"] <- 14
+df[df$Player == "Carson Palmer", "Games.Started"] <- 181
+
+```
+
+```{r}
+
+# Casey Bramlet
+# https://en.wikipedia.org/wiki/Casey_Bramlet
+df[df$Player == "Casey Bramlet", "Draft.Round"] <- 7
+df[df$Player == "Casey Bramlet", "Years.on.Payroll"] <- 0
+df[df$Player == "Casey Bramlet", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Chad Henne
+# https://www.pro-football-reference.com/players/H/HennCh01.htm
+df[df$Player == "Chad Henne", "Draft.Round"] <- 2
+df[df$Player == "Chad Henne", "Years.on.Payroll"] <- 12
+df[df$Player == "Chad Henne", "Games.Started"] <- 54
+df[df$Player == "Chad Henne", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Chad Kelly
+# https://en.wikipedia.org/wiki/Chad_Kelly
+df[df$Player == "Chad Kelly", "Draft.Round"] <- 7
+df[df$Player == "Chad Kelly", "Years.on.Payroll"] <- 0
+df[df$Player == "Chad Kelly", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Chad Pennington
+# https://www.pro-football-reference.com/players/P/PennCh01.htm
+df[df$Player == "Chad Pennington", "Draft.Round"] <- 1
+df[df$Player == "Chad Pennington", "Years.on.Payroll"] <- 11
+df[df$Player == "Chad Pennington", "Games.Started"] <- 81
+
+```
+
+```{r}
+
+# Chandler Harnish
+# https://www.pro-football-reference.com/players/H/HarnCh00.htm
+df[df$Player == "Chandler Harnish", "Draft.Round"] <- 7
+df[df$Player == "Chandler Harnish", "Years.on.Payroll"] <- 0
+df[df$Player == "Chandler Harnish", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Charlie Frye
+# https://www.pro-football-reference.com/players/F/FryeCh00.htm
+df[df$Player == "Charlie Frye", "Draft.Round"] <- 3
+df[df$Player == "Charlie Frye", "Years.on.Payroll"] <- 5
+df[df$Player == "Charlie Frye", "Games.Started"] <- 23
+
+```
+
+```{r}
+
+# Charlie Whitehurst
+# https://www.pro-football-reference.com/players/W/WhitCh02.htm
+df[df$Player == "Charlie Whitehurst", "Draft.Round"] <- 3
+df[df$Player == "Charlie Whitehurst", "Years.on.Payroll"] <- 7
+df[df$Player == "Charlie Whitehurst", "Games.Started"] <- 9
+
+```
+
+```{r}
+
+# Chris Redman
+# https://www.pro-football-reference.com/players/R/RedmCh00.htm
+df[df$Player == "Chris Redman", "Draft.Round"] <- 3
+df[df$Player == "Chris Redman", "Years.on.Payroll"] <- 8
+df[df$Player == "Chris Redman", "Games.Started"] <- 12
+
+```
+
+```{r}
+
+# Chris Simms
+# https://www.pro-football-reference.com/players/S/SimmCh00.htm
+df[df$Player == "Chris Simms", "Draft.Round"] <- 3
+df[df$Player == "Chris Simms", "Years.on.Payroll"] <- 5
+df[df$Player == "Chris Simms", "Games.Started"] <- 16
+
+```
+
+```{r}
+
+# Chris Weinke
+# https://www.pro-football-reference.com/players/W/WeinCh00.htm
+df[df$Player == "Chris Weinke", "Draft.Round"] <- 4
+df[df$Player == "Chris Weinke", "Years.on.Payroll"] <- 5
+df[df$Player == "Chris Weinke", "Games.Started"] <- 20
+
+```
+
+```{r}
+
+# Christian Hackenberg
+# https://www.pro-football-reference.com/players/H/HackCh01.htm
+df[df$Player == "Christian Hackenberg", "Draft.Round"] <- 2
+df[df$Player == "Christian Hackenberg", "Years.on.Payroll"] <- 0
+df[df$Player == "Christian Hackenberg", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Christian Ponder
+# https://www.pro-football-reference.com/players/P/PondCh00.htm
+df[df$Player == "Christian Ponder", "Draft.Round"] <- 1
+df[df$Player == "Christian Ponder", "Years.on.Payroll"] <- 4
+df[df$Player == "Christian Ponder", "Games.Started"] <- 36
+
+```
+
+```{r}
+
+# Clayton Thorson
+# https://www.pro-football-reference.com/players/T/ThorCl00.htm
+df[df$Player == "Clayton Thorson", "Draft.Round"] <- 5
+df[df$Player == "Clayton Thorson", "Years.on.Payroll"] <- 0
+df[df$Player == "Clayton Thorson", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Cody Kessler
+# https://www.pro-football-reference.com/players/K/KessCo00.htm
+df[df$Player == "Cody Kessler", "Draft.Round"] <- 3
+df[df$Player == "Cody Kessler", "Years.on.Payroll"] <- 3
+df[df$Player == "Cody Kessler", "Games.Started"] <- 12
+
+```
+
+```{r}
+
+# Cody Pickett
+# https://www.pro-football-reference.com/players/P/PickCo00.htm
+df[df$Player == "Cody Pickett", "Draft.Round"] <- 7
+df[df$Player == "Cody Pickett", "Years.on.Payroll"] <- 2
+df[df$Player == "Cody Pickett", "Games.Started"] <- 2
+
+```
+
+```{r}
+
+# Colin Kaepernick
+# https://www.pro-football-reference.com/players/K/KaepCo00.htm
+df[df$Player == "Colin Kaepernick", "Draft.Round"] <- 2
+df[df$Player == "Colin Kaepernick", "Years.on.Payroll"] <- 6
+df[df$Player == "Colin Kaepernick", "Games.Started"] <- 58
+
+```
+
+```{r}
+
+# Colt Brennan
+# https://www.pro-football-reference.com/players/B/BrenCo00.htm
+df[df$Player == "Colt Brennan", "Draft.Round"] <- 6
+df[df$Player == "Colt Brennan", "Years.on.Payroll"] <- 0
+df[df$Player == "Colt Brennan", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Colt McCoy
+# https://www.pro-football-reference.com/players/M/McCoCo00.htm
+df[df$Player == "Colt McCoy", "Draft.Round"] <- 3
+df[df$Player == "Colt McCoy", "Years.on.Payroll"] <- 11
+df[df$Player == "Colt McCoy", "Games.Started"] <- 32
+df[df$Player == "Colt McCoy", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Connor Cook
+# https://www.pro-football-reference.com/players/C/CookCo00.htm
+df[df$Player == "Connor Cook", "Draft.Round"] <- 4
+df[df$Player == "Connor Cook", "Years.on.Payroll"] <- 1
+df[df$Player == "Connor Cook", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Craig Krenzel
+# https://www.pro-football-reference.com/players/K/KrenCr00.htm
+df[df$Player == "Craig Krenzel", "Draft.Round"] <- 5
+df[df$Player == "Craig Krenzel", "Years.on.Payroll"] <- 1
+df[df$Player == "Craig Krenzel", "Games.Started"] <- 5
+
+```
+
+```{r}
+
+# Curtis Painter
+# https://www.pro-football-reference.com/players/P/PainCu00.htm
+df[df$Player == "Curtis Painter", "Draft.Round"] <- 6
+df[df$Player == "Curtis Painter", "Years.on.Payroll"] <- 3
+df[df$Player == "Curtis Painter", "Games.Started"] <- 8
+
+```
+
+```{r}
+
+# D.J. Shockley
+# https://en.wikipedia.org/wiki/D._J._Shockley
+df[df$Player == "D.J. Shockley", "Draft.Round"] <- 7
+df[df$Player == "D.J. Shockley", "Years.on.Payroll"] <- 4
+df[df$Player == "D.J. Shockley", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Dak Prescott
+# https://www.pro-football-reference.com/players/P/PresDa01.htm
+df[df$Player == "Dak Prescott", "Draft.Round"] <- 4
+df[df$Player == "Dak Prescott", "Years.on.Payroll"] <- 6
+df[df$Player == "Dak Prescott", "Games.Started"] <- 77
+df[df$Player == "Dak Prescott", "Under.Contract"] <- "Yes"
+
+```
+
+
+```{r}
+
+# Dan Orlovsky
+# https://www.pro-football-reference.com/players/O/OrloDa00.htm
+df[df$Player == "Dan Orlovsky", "Draft.Round"] <- 5
+df[df$Player == "Dan Orlovsky", "Years.on.Payroll"] <- 7
+df[df$Player == "Dan Orlovsky", "Games.Started"] <- 12
+
+```
+
+```{r}
+
+# Daniel Jones
+# https://www.pro-football-reference.com/players/J/JoneDa05.htm
+df[df$Player == "Daniel Jones", "Draft.Round"] <- 1
+df[df$Player == "Daniel Jones", "Years.on.Payroll"] <- 3
+df[df$Player == "Daniel Jones", "Games.Started"] <- 35
+df[df$Player == "Daniel Jones", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Danny Etling
+# https://www.pro-football-reference.com/players/E/EtliDa00.htm
+df[df$Player == "Danny Etling", "Draft.Round"] <- 7
+df[df$Player == "Danny Etling", "Years.on.Payroll"] <- 0
+df[df$Player == "Danny Etling", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Dave Ragone
+# https://www.pro-football-reference.com/players/R/RagoDa00.htm
+df[df$Player == "Dave Ragone", "Draft.Round"] <- 3
+df[df$Player == "Dave Ragone", "Years.on.Payroll"] <- 1
+df[df$Player == "Dave Ragone", "Games.Started"] <- 2
+
+```
+
+```{r}
+
+# David Carr
+# https://www.pro-football-reference.com/players/C/CarrDa00.htm
+df[df$Player == "David Carr", "Draft.Round"] <- 1
+df[df$Player == "David Carr", "Years.on.Payroll"] <- 10
+df[df$Player == "David Carr", "Games.Started"] <- 79
+
+```
+
+```{r}
+
+# David Fales
+# https://www.pro-football-reference.com/players/F/FaleDa00.htm
+df[df$Player == "David Fales", "Draft.Round"] <- 6
+df[df$Player == "David Fales", "Years.on.Payroll"] <- 3
+df[df$Player == "David Fales", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# David Garrard
+# https://www.pro-football-reference.com/players/G/GarrDa00.htm
+df[df$Player == "David Garrard", "Draft.Round"] <- 4
+df[df$Player == "David Garrard", "Years.on.Payroll"] <- 9
+df[df$Player == "David Garrard", "Games.Started"] <- 76
+
+```
+
+```{r}
+
+# Davis Webb
+# https://www.pro-football-reference.com/players/W/WebbDa00.htm
+df[df$Player == "Davis Webb", "Draft.Round"] <- 3
+df[df$Player == "Davis Webb", "Years.on.Payroll"] <- 1
+df[df$Player == "Davis Webb", "Games.Started"] <- 0
+df[df$Player == "Davis Webb", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Dennis Dixon
+# https://www.pro-football-reference.com/players/D/DixoDe00.htm
+df[df$Player == "Dennis Dixon", "Draft.Round"] <- 5
+df[df$Player == "Dennis Dixon", "Years.on.Payroll"] <- 3
+df[df$Player == "Dennis Dixon", "Games.Started"] <- 3
+
+```
+
+```{r}
+
+# Derek Anderson
+# https://www.pro-football-reference.com/players/A/AndeDe00.htm
+df[df$Player == "Derek Anderson", "Draft.Round"] <- 6
+df[df$Player == "Derek Anderson", "Years.on.Payroll"] <- 13
+df[df$Player == "Derek Anderson", "Games.Started"] <- 49
+
+```
+
+```{r}
+
+# Derek Carr
+# https://www.pro-football-reference.com/players/C/CarrDe02.htm
+df[df$Player == "Derek Carr", "Draft.Round"] <- 2
+df[df$Player == "Derek Carr", "Years.on.Payroll"] <- 8
+df[df$Player == "Derek Carr", "Games.Started"] <- 119
+df[df$Player == "Derek Carr", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Deshaun Watson
+# https://www.pro-football-reference.com/players/W/WatsDe00.htm
+df[df$Player == "Deshaun Watson", "Draft.Round"] <- 1
+df[df$Player == "Deshaun Watson", "Years.on.Payroll"] <- 5
+df[df$Player == "Deshaun Watson", "Games.Started"] <- 53
+df[df$Player == "Deshaun Watson", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# DeShone Kizer
+# https://www.pro-football-reference.com/players/K/KizeDe00.htm
+df[df$Player == "DeShone Kizer", "Draft.Round"] <- 2
+df[df$Player == "DeShone Kizer", "Years.on.Payroll"] <- 2
+df[df$Player == "DeShone Kizer", "Games.Started"] <- 15
+
+```
+
+```{r}
+
+# Drew Brees
+# https://www.pro-football-reference.com/players/B/BreeDr00.htm
+df[df$Player == "Drew Brees", "Draft.Round"] <- 2
+df[df$Player == "Drew Brees", "Years.on.Payroll"] <- 20
+df[df$Player == "Drew Brees", "Games.Started"] <- 286
+
+```
+
+```{r}
+
+# Drew Lock
+# https://www.pro-football-reference.com/players/L/LockDr00.htm
+df[df$Player == "Drew Lock", "Draft.Round"] <- 2
+df[df$Player == "Drew Lock", "Years.on.Payroll"] <- 3
+df[df$Player == "Drew Lock", "Games.Started"] <- 18
+df[df$Player == "Drew Lock", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Drew Stanton
+# https://www.pro-football-reference.com/players/S/StanDr00.htm
+df[df$Player == "Drew Stanton", "Draft.Round"] <- 2
+df[df$Player == "Drew Stanton", "Years.on.Payroll"] <- 7
+df[df$Player == "Drew Stanton", "Games.Started"] <- 17
+
+```
+
+```{r}
+
+# Dwayne Haskins
+# https://www.pro-football-reference.com/players/H/HaskDw00.htm
+df[df$Player == "Dwayne Haskins", "Draft.Round"] <- 1
+df[df$Player == "Dwayne Haskins", "Years.on.Payroll"] <- 2
+df[df$Player == "Dwayne Haskins", "Games.Started"] <- 13
+
+```
+
+```{r}
+
+# Eli Manning
+# https://www.pro-football-reference.com/players/M/MannEl00.htm
+df[df$Player == "Eli Manning", "Draft.Round"] <- 1
+df[df$Player == "Eli Manning", "Years.on.Payroll"] <- 16
+df[df$Player == "Eli Manning", "Games.Started"] <- 234
+
+```
+
+```{r}
+
+# Erik Ainge
+# https://en.wikipedia.org/wiki/Erik_Ainge#Professional_career
+df[df$Player == "Erik Ainge", "Draft.Round"] <- 5
+df[df$Player == "Erik Ainge", "Years.on.Payroll"] <- 0
+df[df$Player == "Erik Ainge", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Gardner Minshew
+# https://www.pro-football-reference.com/players/M/MinsGa00.htm
+df[df$Player == "Gardner Minshew", "Draft.Round"] <- 6
+df[df$Player == "Gardner Minshew", "Years.on.Payroll"] <- 3
+df[df$Player == "Gardner Minshew", "Games.Started"] <- 20
+df[df$Player == "Gardner Minshew", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Garrett Gilbert
+# https://www.pro-football-reference.com/players/G/GilbGa01.htm
+df[df$Player == "Garrett Gilbert", "Draft.Round"] <- 6
+df[df$Player == "Garrett Gilbert", "Years.on.Payroll"] <- 3
+df[df$Player == "Garrett Gilbert", "Games.Started"] <- 1
+
+```
+
+```{r}
+
+# Garrett Grayson
+# https://www.pro-football-reference.com/players/G/GrayGa00.htm
+df[df$Player == "Garrett Grayson", "Draft.Round"] <- 3
+df[df$Player == "Garrett Grayson", "Years.on.Payroll"] <- 1
+df[df$Player == "Garrett Grayson", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Geno Smith
+# https://www.pro-football-reference.com/players/S/SmitGe00.htm
+df[df$Player == "Geno Smith", "Draft.Round"] <- 2
+df[df$Player == "Geno Smith", "Years.on.Payroll"] <- 8
+df[df$Player == "Geno Smith", "Games.Started"] <- 34
+df[df$Player == "Geno Smith", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Gibran Hamdan
+# https://www.pro-football-reference.com/players/H/HamdGi00.htm
+df[df$Player == "Gibran Hamdan", "Draft.Round"] <- 7
+df[df$Player == "Gibran Hamdan", "Years.on.Payroll"] <- 1
+df[df$Player == "Gibran Hamdan", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Greg McElroy
+# https://www.pro-football-reference.com/players/M/McElGr00.htm
+df[df$Player == "Greg McElroy", "Draft.Round"] <- 7
+df[df$Player == "Greg McElroy", "Years.on.Payroll"] <- 1
+df[df$Player == "Greg McElroy", "Games.Started"] <- 1
+
+```
+
+```{r}
+
+# Isaiah Stanback
+# https://www.pro-football-reference.com/players/S/StanIs00.htm
+df[df$Player == "Isaiah Stanback", "Draft.Round"] <- 4
+df[df$Player == "Isaiah Stanback", "Years.on.Payroll"] <- 4
+df[df$Player == "Isaiah Stanback", "Games.Started"] <- 2
+
+```
+
+```{r}
+
+# J.P. Losman
+# https://www.pro-football-reference.com/players/L/LosmJ.00.htm
+df[df$Player == "J.P. Losman", "Draft.Round"] <- 1
+df[df$Player == "J.P. Losman", "Years.on.Payroll"] <- 7
+df[df$Player == "J.P. Losman", "Games.Started"] <- 33
+
+```
+
+```{r}
+
+# Jacoby Brissett
+# https://www.pro-football-reference.com/players/B/BrisJa00.htm
+df[df$Player == "Jacoby Brissett", "Draft.Round"] <- 3
+df[df$Player == "Jacoby Brissett", "Years.on.Payroll"] <- 6
+df[df$Player == "Jacoby Brissett", "Games.Started"] <- 37
+df[df$Player == "Jacoby Brissett", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Jake Locker
+# https://www.pro-football-reference.com/players/L/LockJa00.htm
+df[df$Player == "Jake Locker", "Draft.Round"] <- 1
+df[df$Player == "Jake Locker", "Years.on.Payroll"] <- 4
+df[df$Player == "Jake Locker", "Games.Started"] <- 23
+
+```
+
+```{r}
+
+# Jake Rudock
+# https://www.pro-football-reference.com/players/R/RudoJa00.htm
+df[df$Player == "Jake Rudock", "Draft.Round"] <- 6
+df[df$Player == "Jake Rudock", "Years.on.Payroll"] <- 1
+df[df$Player == "Jake Rudock", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Jameis Winston
+# https://www.pro-football-reference.com/players/W/WinsJa00.htm
+df[df$Player == "Jameis Winston", "Draft.Round"] <- 1
+df[df$Player == "Jameis Winston", "Years.on.Payroll"] <- 5
+df[df$Player == "Jameis Winston", "Games.Started"] <- 77
+df[df$Player == "Jameis Winston", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# James Kilian
+# https://en.wikipedia.org/wiki/James_Kilian
+df[df$Player == "James Kilian", "Draft.Round"] <- 7
+df[df$Player == "James Kilian", "Years.on.Payroll"] <- 0
+df[df$Player == "James Kilian", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Jared Goff
+# https://www.pro-football-reference.com/players/G/GoffJa00.htm
+df[df$Player == "Jared Goff", "Draft.Round"] <- 1
+df[df$Player == "Jared Goff", "Years.on.Payroll"] <- 6
+df[df$Player == "Jared Goff", "Games.Started"] <- 78
+df[df$Player == "Jared Goff", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Jarious Jackson
+# https://www.pro-football-reference.com/players/J/JackJa01.htm
+df[df$Player == "Jarious Jackson", "Draft.Round"] <- 7
+df[df$Player == "Jarious Jackson", "Years.on.Payroll"] <- 4
+df[df$Player == "Jarious Jackson", "Games.Started"] <- 1
+
+```
+
+```{r}
+
+# Jarrett Stidham
+# https://www.pro-football-reference.com/players/S/StidJa00.htm
+df[df$Player == "Jarrett Stidham", "Draft.Round"] <- 4
+df[df$Player == "Jarrett Stidham", "Years.on.Payroll"] <- 2
+df[df$Player == "Jarrett Stidham", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Jason Campbell
+# https://www.pro-football-reference.com/players/C/CampJa00.htm
+df[df$Player == "Jason Campbell", "Draft.Round"] <- 1
+df[df$Player == "Jason Campbell", "Years.on.Payroll"] <- 9
+df[df$Player == "Jason Campbell", "Games.Started"] <- 79
+
+```
+
+```{r}
+
+# Jay Cutler
+# https://www.pro-football-reference.com/players/C/CutlJa00.htm
+df[df$Player == "Jay Cutler", "Draft.Round"] <- 1
+df[df$Player == "Jay Cutler", "Years.on.Payroll"] <- 12
+df[df$Player == "Jay Cutler", "Games.Started"] <- 153
+
+```
+
+```{r}
+
+# Jeff Driskel
+# https://www.pro-football-reference.com/players/D/DrisJe00.htm
+df[df$Player == "Jeff Driskel", "Draft.Round"] <- 6
+df[df$Player == "Jeff Driskel", "Years.on.Payroll"] <- 3
+df[df$Player == "Jeff Driskel", "Games.Started"] <- 9
+
+```
+
+```{r}
+
+# Jeff Kelly
+# https://www.pro-football-reference.com/players/K/KellJe20.htm
+df[df$Player == "Jeff Kelly", "Draft.Round"] <- 6
+df[df$Player == "Jeff Kelly", "Years.on.Payroll"] <- 3
+df[df$Player == "Jeff Kelly", "Games.Started"] <- 7
+
+```
+
+```{r}
+
+# Jeff Rowe
+# https://www.pro-football-reference.com/players/R/RoweJe00.htm
+df[df$Player == "Jeff Rowe", "Draft.Round"] <- 5 
+df[df$Player == "Jeff Rowe", "Years.on.Payroll"] <- 1
+df[df$Player == "Jeff Rowe", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Jeff Smoker
+# https://en.wikipedia.org/wiki/Jeff_Smoker
+df[df$Player == "Jeff Smoker", "Draft.Round"] <- 6
+df[df$Player == "Jeff Smoker", "Years.on.Payroll"] <- 1
+df[df$Player == "Jeff Smoker", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Jesse Palmer
+# https://www.pro-football-reference.com/players/P/PalmJe00.htm
+df[df$Player == "Jesse Palmer", "Draft.Round"] <- 4
+df[df$Player == "Jesse Palmer", "Years.on.Payroll"] <- 2
+df[df$Player == "Jesse Palmer", "Games.Started"] <- 3
+
+```
+
+```{r}
+
+# Jim Sorgi
+# https://www.pro-football-reference.com/players/S/SorgJi00.htm
+df[df$Player == "Jim Sorgi", "Draft.Round"] <- 6
+df[df$Player == "Jim Sorgi", "Years.on.Payroll"] <- 6
+df[df$Player == "Jim Sorgi", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Jimmy Clausen
+# https://www.pro-football-reference.com/players/C/ClauJi00.htm
+df[df$Player == "Jimmy Clausen", "Draft.Round"] <- 2
+df[df$Player == "Jimmy Clausen", "Years.on.Payroll"] <- 3
+df[df$Player == "Jimmy Clausen", "Games.Started"] <- 14
+
+```
+
+```{r}
+
+# Joe Hamilton
+# https://www.pro-football-reference.com/players/H/HamiJo20.htm
+df[df$Player == "Joe Hamilton", "Draft.Round"] <- 7
+df[df$Player == "Joe Hamilton", "Years.on.Payroll"] <- 1
+df[df$Player == "Joe Hamilton", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Joe Webb
+# https://www.pro-football-reference.com/players/W/WebbJo00.htm
+df[df$Player == "Joe Webb", "Draft.Round"] <- 6
+df[df$Player == "Joe Webb", "Years.on.Payroll"] <- 10
+df[df$Player == "Joe Webb", "Games.Started"] <- 4
+
+```
+
+```{r}
+
+# Joey Harrington
+# https://www.pro-football-reference.com/players/H/HarrJo00.htm
+df[df$Player == "Joey Harrington", "Draft.Round"] <- 1
+df[df$Player == "Joey Harrington", "Years.on.Payroll"] <- 6
+df[df$Player == "Joey Harrington", "Games.Started"] <- 76
+
+```
+
+```{r}
+
+# John Beck
+# https://www.pro-football-reference.com/players/B/BeckJo00.htm
+df[df$Player == "John Beck", "Draft.Round"] <- 2
+df[df$Player == "John Beck", "Years.on.Payroll"] <- 2
+df[df$Player == "John Beck", "Games.Started"] <- 7
+
+```
+
+```{r}
+
+# John David Booty
+# https://en.wikipedia.org/wiki/John_David_Booty#Minnesota_Vikings
+df[df$Player == "John David Booty", "Draft.Round"] <- 5
+df[df$Player == "John David Booty", "Years.on.Payroll"] <- 1
+df[df$Player == "John David Booty", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# John Navarre
+# https://www.pro-football-reference.com/players/N/NavaJo00.htm
+df[df$Player == "John Navarre", "Draft.Round"] <- 7
+df[df$Player == "John Navarre", "Years.on.Payroll"] <- 2
+df[df$Player == "John Navarre", "Games.Started"] <- 1
+
+```
+
+```{r}
+
+# Johnny Manziel
+# https://www.pro-football-reference.com/players/M/ManzJo00.htm
+df[df$Player == "Johnny Manziel", "Draft.Round"] <- 1
+df[df$Player == "Johnny Manziel", "Years.on.Payroll"] <- 2
+df[df$Player == "Johnny Manziel", "Games.Started"] <- 8
+
+```
+
+```{r}
+
+# Jonathan Crompton
+# https://en.wikipedia.org/wiki/Jonathan_Crompton#Professional_career
+df[df$Player == "Jonathan Crompton", "Draft.Round"] <- 5
+df[df$Player == "Jonathan Crompton", "Years.on.Payroll"] <- 0
+df[df$Player == "Jonathan Crompton", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Jordan Palmer
+# https://www.pro-football-reference.com/players/P/PalmJo20.htm
+df[df$Player == "Jordan Palmer", "Draft.Round"] <- 6
+df[df$Player == "Jordan Palmer", "Years.on.Payroll"] <- 3 
+df[df$Player == "Jordan Palmer", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Josh Booty
+# https://en.wikipedia.org/wiki/Josh_Booty#Professional_football_career
+df[df$Player == "Josh Booty", "Draft.Round"] <- 6
+df[df$Player == "Josh Booty", "Years.on.Payroll"] <- 0
+df[df$Player == "Josh Booty", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Josh Freeman
+# https://www.pro-football-reference.com/players/F/FreeJo00.htm
+df[df$Player == "Josh Freeman", "Draft.Round"] <- 1
+df[df$Player == "Josh Freeman", "Years.on.Payroll"] <- 7
+df[df$Player == "Josh Freeman", "Games.Started"] <- 61
+
+```
+
+```{r}
+
+# Josh Harris
+# https://en.wikipedia.org/wiki/Josh_Harris_(quarterback)#Professional_career
+df[df$Player == "Josh Harris", "Draft.Round"] <- 6
+df[df$Player == "Josh Harris", "Years.on.Payroll"] <- 2
+df[df$Player == "Josh Harris", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Josh Heupel
+# https://en.wikipedia.org/wiki/Josh_Heupel
+df[df$Player == "Josh Heupel", "Draft.Round"] <- 6
+df[df$Player == "Josh Heupel", "Years.on.Payroll"] <- 0
+df[df$Player == "Josh Heupel", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Josh McCown
+# https://www.pro-football-reference.com/players/M/McCoJo01.htm
+df[df$Player == "Josh McCown", "Draft.Round"] <- 3
+df[df$Player == "Josh McCown", "Years.on.Payroll"] <- 16
+df[df$Player == "Josh McCown", "Games.Started"] <- 76
+
+```
+
+```{r}
+
+# Josh Rosen
+# https://www.pro-football-reference.com/players/R/RoseJo01.htm
+df[df$Player == "Josh Rosen", "Draft.Round"] <- 1
+df[df$Player == "Josh Rosen", "Years.on.Payroll"] <- 3
+df[df$Player == "Josh Rosen", "Games.Started"] <- 16
+df[df$Player == "Josh Rosen", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Joshua Dobbs
+# https://www.pro-football-reference.com/players/D/DobbJo00.htm
+df[df$Player == "Joshua Dobbs", "Draft.Round"] <- 4
+df[df$Player == "Joshua Dobbs", "Years.on.Payroll"] <- 2
+df[df$Player == "Joshua Dobbs", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Keith Wenning
+# https://www.pro-football-reference.com/players/W/WennKe00.htm
+df[df$Player == "Keith Wenning", "Draft.Round"] <- 6
+df[df$Player == "Keith Wenning", "Years.on.Payroll"] <- 1
+df[df$Player == "Keith Wenning", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Kellen Clemens
+# https://www.pro-football-reference.com/players/C/ClemKe00.htm
+df[df$Player == "Kellen Clemens", "Draft.Round"] <- 2
+df[df$Player == "Kellen Clemens", "Years.on.Payroll"] <- 12
+df[df$Player == "Kellen Clemens", "Games.Started"] <- 21
+
+```
+
+```{r}
+
+# Ken Dorsey
+# https://www.pro-football-reference.com/players/D/DorsKe00.htm
+df[df$Player == "Ken Dorsey", "Draft.Round"] <- 7
+df[df$Player == "Ken Dorsey", "Years.on.Payroll"] <- 5
+df[df$Player == "Ken Dorsey", "Games.Started"] <- 13
+
+```
+
+```{r}
+
+# Kevin Hogan
+# https://www.pro-football-reference.com/players/H/HogaKe00.htm
+df[df$Player == "Kevin Hogan", "Draft.Round"] <- 5
+df[df$Player == "Kevin Hogan", "Years.on.Payroll"] <- 2
+df[df$Player == "Kevin Hogan", "Games.Started"] <- 1
+
+```
+
+```{r}
+
+# Kevin Kolb
+# https://www.pro-football-reference.com/players/K/KolbKe00.htm
+df[df$Player == "Kevin Kolb", "Draft.Round"] <- 2
+df[df$Player == "Kevin Kolb", "Years.on.Payroll"] <- 6
+df[df$Player == "Kevin Kolb", "Games.Started"] <- 21
+
+```
+
+```{r}
+
+# Kevin O'Connell
+# https://www.pro-football-reference.com/players/O/OConKe00.htm
+df[df$Player == "Kevin O'Connell", "Draft.Round"] <- 3
+df[df$Player == "Kevin O'Connell", "Years.on.Payroll"] <- 1
+df[df$Player == "Kevin O'Connell", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Kirk Cousins
+# https://www.pro-football-reference.com/players/C/CousKi00.htm
+df[df$Player == "Kirk Cousins", "Draft.Round"] <- 4
+df[df$Player == "Kirk Cousins", "Years.on.Payroll"] <- 10
+df[df$Player == "Kirk Cousins", "Games.Started"] <- 114
+df[df$Player == "Kirk Cousins", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Kliff Kingsbury
+# https://www.pro-football-reference.com/players/K/KingKl00.htm
+df[df$Player == "Kliff Kingsbury", "Draft.Round"] <- 6
+df[df$Player == "Kliff Kingsbury", "Years.on.Payroll"] <- 1
+df[df$Player == "Kliff Kingsbury", "Games.Started"] <- 0 
+
+```
+
+```{r}
+
+# Kurt Kittner
+# https://www.pro-football-reference.com/players/K/KittKu00.htm
+df[df$Player == "Kurt Kittner", "Draft.Round"] <- 5
+df[df$Player == "Kurt Kittner", "Years.on.Payroll"] <- 1
+df[df$Player == "Kurt Kittner", "Games.Started"] <- 4
+
+```
+
+```{r}
+
+# Kyle Boller
+# https://www.pro-football-reference.com/players/B/BollKy00.htm
+df[df$Player == "Kyle Boller", "Draft.Round"] <- 1
+df[df$Player == "Kyle Boller", "Years.on.Payroll"] <- 8
+df[df$Player == "Kyle Boller", "Games.Started"] <- 47
+
+```
+
+```{r}
+
+# Kyle Orton
+# https://www.pro-football-reference.com/players/O/OrtoKy00.htm
+df[df$Player == "Kyle Orton", "Draft.Round"] <- 4
+df[df$Player == "Kyle Orton", "Years.on.Payroll"] <- 10
+df[df$Player == "Kyle Orton", "Games.Started"] <- 82
+
+```
+
+```{r}
+
+# Kyler Murray
+# https://www.pro-football-reference.com/players/M/MurrKy00.htm
+df[df$Player == "Kyler Murray", "Draft.Round"] <- 1
+df[df$Player == "Kyler Murray", "Years.on.Payroll"] <- 3
+df[df$Player == "Kyler Murray", "Games.Started"] <- 40
+df[df$Player == "Kyler Murray", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Lamar Jackson
+# https://www.pro-football-reference.com/players/J/JackLa00.htm
+df[df$Player == "Lamar Jackson", "Draft.Round"] <- 1
+df[df$Player == "Lamar Jackson", "Years.on.Payroll"] <- 4
+df[df$Player == "Lamar Jackson", "Games.Started"] <- 46
+df[df$Player == "Lamar Jackson", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Landry Jones
+# https://www.pro-football-reference.com/players/J/JoneLa02.htm
+df[df$Player == "Landry Jones", "Draft.Round"] <- 4
+df[df$Player == "Landry Jones", "Years.on.Payroll"] <- 4
+df[df$Player == "Landry Jones", "Games.Started"] <- 5
+
+```
+
+```{r}
+
+# Levi Brown
+# https://www.pro-football-reference.com/players/B/BrowLe00.htm
+df[df$Player == "Levi Brown", "Draft.Round"] <- 7
+df[df$Player == "Levi Brown", "Years.on.Payroll"] <- 1
+df[df$Player == "Levi Brown", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Logan Thomas
+# https://www.pro-football-reference.com/players/T/ThomLo00.htm
+df[df$Player == "Logan Thomas", "Draft.Round"] <- 4
+df[df$Player == "Logan Thomas", "Years.on.Payroll"] <- 6
+df[df$Player == "Logan Thomas", "Games.Started"] <- 27
+df[df$Player == "Logan Thomas", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Logan Woodside
+# https://www.pro-football-reference.com/players/W/WoodLo00.htm
+df[df$Player == "Logan Woodside", "Draft.Round"] <- 7
+df[df$Player == "Logan Woodside", "Years.on.Payroll"] <- 2
+df[df$Player == "Logan Woodside", "Games.Started"] <- 0
+df[df$Player == "Logan Woodside", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Luke Falk
+# https://www.pro-football-reference.com/players/F/FalkLu00.htm
+df[df$Player == "Luke Falk", "Draft.Round"] <- 6
+df[df$Player == "Luke Falk", "Years.on.Payroll"] <- 1
+df[df$Player == "Luke Falk", "Games.Started"] <- 2
+
+```
+
+```{r}
+
+# Luke McCown
+# https://www.pro-football-reference.com/players/M/McCoLu00.htm
+df[df$Player == "Luke McCown", "Draft.Round"] <- 4
+df[df$Player == "Luke McCown", "Years.on.Payroll"] <- 10
+df[df$Player == "Luke McCown", "Games.Started"] <- 10
+
+```
+
+```{r}
+
+# Marcus Mariota
+# https://www.pro-football-reference.com/players/M/MariMa01.htm
+df[df$Player == "Marcus Mariota", "Draft.Round"] <- 1
+df[df$Player == "Marcus Mariota", "Years.on.Payroll"] <- 7
+df[df$Player == "Marcus Mariota", "Games.Started"] <- 61
+df[df$Player == "Marcus Mariota", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Mark Sanchez
+# https://www.pro-football-reference.com/players/S/SancMa00.htm
+df[df$Player == "Mark Sanchez", "Draft.Round"] <- 1
+df[df$Player == "Mark Sanchez", "Years.on.Payroll"] <- 8
+df[df$Player == "Mark Sanchez", "Games.Started"] <- 73
+
+```
+
+```{r}
+
+# Marques Tuiasosopo
+# https://www.pro-football-reference.com/players/T/TuiaMa00.htm
+df[df$Player == "Marques Tuiasosopo", "Draft.Round"] <- 2
+df[df$Player == "Marques Tuiasosopo", "Years.on.Payroll"] <- 6
+df[df$Player == "Marques Tuiasosopo", "Games.Started"] <- 2
+
+```
+
+```{r}
+
+# Mason Rudolph
+# https://www.pro-football-reference.com/players/R/RudoMa00.htm
+df[df$Player == "Mason Rudolph", "Draft.Round"] <- 3
+df[df$Player == "Mason Rudolph", "Years.on.Payroll"] <- 3
+df[df$Player == "Mason Rudolph", "Games.Started"] <- 10
+df[df$Player == "Mason Rudolph", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Matt Barkley
+# https://www.pro-football-reference.com/players/B/BarkMa00.htm
+df[df$Player == "Matt Barkley", "Draft.Round"] <- 4
+df[df$Player == "Matt Barkley", "Years.on.Payroll"] <- 6
+df[df$Player == "Matt Barkley", "Games.Started"] <- 7
+
+```
+
+```{r}
+
+# Matt Flynn
+# https://www.pro-football-reference.com/players/F/FlynMa00.htm
+df[df$Player == "Matt Flynn", "Draft.Round"] <- 7
+df[df$Player == "Matt Flynn", "Years.on.Payroll"] <- 7
+df[df$Player == "Matt Flynn", "Games.Started"] <- 7
+
+```
+
+```{r}
+
+# Matt Leinart
+# https://www.pro-football-reference.com/players/L/LeinMa00.htm
+df[df$Player == "Matt Leinart", "Draft.Round"] <- 1
+df[df$Player == "Matt Leinart", "Years.on.Payroll"] <- 6
+df[df$Player == "Matt Leinart", "Games.Started"] <- 18
+
+```
+
+```{r}
+
+# Matt Mauck
+# https://www.pro-football-reference.com/players/M/MaucMa00.htm
+df[df$Player == "Matt Mauck", "Draft.Round"] <- 7
+df[df$Player == "Matt Mauck", "Years.on.Payroll"] <- 1
+df[df$Player == "Matt Mauck", "Games.Started"] <- 1
+
+```
+
+```{r}
+
+# Matt Ryan
+# https://www.pro-football-reference.com/players/R/RyanMa00.htm
+df[df$Player == "Matt Ryan", "Draft.Round"] <- 1
+df[df$Player == "Matt Ryan", "Years.on.Payroll"] <- 14
+df[df$Player == "Matt Ryan", "Games.Started"] <- 215
+df[df$Player == "Matt Ryan", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Matthew Stafford
+# https://www.pro-football-reference.com/players/S/StafMa00.htm
+df[df$Player == "Matthew Stafford", "Draft.Round"] <- 1
+df[df$Player == "Matthew Stafford", "Years.on.Payroll"] <- 13
+df[df$Player == "Matthew Stafford", "Games.Started"] <- 175
+df[df$Player == "Matthew Stafford", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Michael Vick
+# https://www.pro-football-reference.com/players/V/VickMi00.htm
+df[df$Player == "Michael Vick", "Draft.Round"] <- 1
+df[df$Player == "Michael Vick", "Years.on.Payroll"] <- 13
+df[df$Player == "Michael Vick", "Games.Started"] <- 115
+
+```
+
+```{r}
+
+# Mike Glennon
+# https://www.pro-football-reference.com/players/G/GlenMi00.htm
+df[df$Player == "Mike Glennon", "Draft.Round"] <- 3
+df[df$Player == "Mike Glennon", "Years.on.Payroll"] <- 8
+df[df$Player == "Mike Glennon", "Games.Started"] <- 27
+df[df$Player == "Mike Glennon", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Mike McMahon
+# https://www.pro-football-reference.com/players/M/McMaMi00.htm
+df[df$Player == "Mike McMahon", "Draft.Round"] <- 5
+df[df$Player == "Mike McMahon", "Years.on.Payroll"] <- 5
+df[df$Player == "Mike McMahon", "Games.Started"] <- 14
+
+```
+
+```{r}
+
+# Mike Teel
+# https://en.wikipedia.org/wiki/Mike_Teel#Professional_career
+df[df$Player == "Mike Teel", "Draft.Round"] <- 6 
+df[df$Player == "Mike Teel", "Years.on.Payroll"] <- 1
+df[df$Player == "Mike Teel", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Mike White
+# https://www.pro-football-reference.com/players/W/WhitMi01.htm
+df[df$Player == "Mike White", "Draft.Round"] <- 5
+df[df$Player == "Mike White", "Years.on.Payroll"] <- 1
+df[df$Player == "Mike White", "Games.Started"] <- 3
+df[df$Player == "Mike White", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Nate Davis
+# https://en.wikipedia.org/wiki/Nate_Davis_(quarterback)#Professional_career
+df[df$Player == "Nate Davis", "Draft.Round"] <- 5
+df[df$Player == "Nate Davis", "Years.on.Payroll"] <- 1
+df[df$Player == "Nate Davis", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Nate Sudfeld
+# https://www.pro-football-reference.com/players/S/SudfNa00.htm
+df[df$Player == "Nate Sudfeld", "Draft.Round"] <- 6
+df[df$Player == "Nate Sudfeld", "Years.on.Payroll"] <- 3
+df[df$Player == "Nate Sudfeld", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Nathan Enderle
+# https://en.wikipedia.org/wiki/Nathan_Enderle#Professional_career
+df[df$Player == "Nathan Enderle", "Draft.Round"] <- 5
+df[df$Player == "Nathan Enderle", "Years.on.Payroll"] <- 1
+df[df$Player == "Nathan Enderle", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Nathan Peterman
+# https://www.pro-football-reference.com/players/P/PeteNa00.htm
+df[df$Player == "Nathan Peterman", "Draft.Round"] <- 5
+df[df$Player == "Nathan Peterman", "Years.on.Payroll"] <- 4
+df[df$Player == "Nathan Peterman", "Games.Started"] <- 4
+df[df$Player == "Nathan Peterman", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Nick Foles
+# https://www.pro-football-reference.com/players/F/FoleNi00.htm
+df[df$Player == "Nick Foles", "Draft.Round"] <- 3
+df[df$Player == "Nick Foles", "Years.on.Payroll"] <- 9
+df[df$Player == "Nick Foles", "Games.Started"] <- 55
+
+```
+
+```{r}
+
+# Omar Jacobs
+# https://en.wikipedia.org/wiki/Omar_Jacobs
+df[df$Player == "Omar Jacobs", "Draft.Round"] <- 5
+df[df$Player == "Omar Jacobs", "Years.on.Payroll"] <- 0
+df[df$Player == "Omar Jacobs", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Pat White
+# https://en.wikipedia.org/wiki/Pat_White_(American_football)
+df[df$Player == "Pat White", "Draft.Round"] <- 2
+df[df$Player == "Pat White", "Years.on.Payroll"] <- 1
+df[df$Player == "Pat White", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Patrick Mahomes
+# https://www.pro-football-reference.com/players/M/MahoPa00.htm
+df[df$Player == "Patrick Mahomes", "Draft.Round"] <- 1
+df[df$Player == "Patrick Mahomes", "Years.on.Payroll"] <- 5
+df[df$Player == "Patrick Mahomes", "Games.Started"] <- 57
+df[df$Player == "Patrick Mahomes", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Patrick Ramsey
+# https://www.pro-football-reference.com/players/R/RamsPa00.htm
+df[df$Player == "Patrick Ramsey", "Draft.Round"] <- 1
+df[df$Player == "Patrick Ramsey", "Years.on.Payroll"] <- 7
+df[df$Player == "Patrick Ramsey", "Games.Started"] <- 24
+
+```
+
+```{r}
+
+# Paxton Lynch
+# https://www.pro-football-reference.com/players/L/LyncPa00.htm
+df[df$Player == "Paxton Lynch", "Draft.Round"] <- 1
+df[df$Player == "Paxton Lynch", "Years.on.Payroll"] <- 2
+df[df$Player == "Paxton Lynch", "Games.Started"] <- 4
+
+```
+
+```{r}
+
+# Philip Rivers
+# https://www.pro-football-reference.com/players/R/RivePh00.htm
+df[df$Player == "Philip Rivers", "Draft.Round"] <- 1
+df[df$Player == "Philip Rivers", "Years.on.Payroll"] <- 17
+df[df$Player == "Philip Rivers", "Games.Started"] <- 240
+
+```
+
+```{r}
+
+# Quincy Carter
+# https://www.pro-football-reference.com/players/C/CartQu00.htm
+df[df$Player == "Quincy Carter", "Draft.Round"] <- 2
+df[df$Player == "Quincy Carter", "Years.on.Payroll"] <- 4
+df[df$Player == "Quincy Carter", "Games.Started"] <- 34
+
+```
+
+```{r}
+
+# Reggie McNeal
+# https://www.pro-football-reference.com/players/M/McNeRe00.htm
+df[df$Player == "Reggie McNeal", "Draft.Round"] <- 6
+df[df$Player == "Reggie McNeal", "Years.on.Payroll"] <- 1
+df[df$Player == "Reggie McNeal", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Rex Grossman
+# https://www.pro-football-reference.com/players/G/GrosRe00.htm
+df[df$Player == "Rex Grossman", "Draft.Round"] <- 1
+df[df$Player == "Rex Grossman", "Years.on.Payroll"] <- 9
+df[df$Player == "Rex Grossman", "Games.Started"] <- 47
+
+```
+
+```{r}
+
+# Rhett Bomar
+# https://en.wikipedia.org/wiki/Rhett_Bomar#Professional_career
+df[df$Player == "Rhett Bomar", "Draft.Round"] <- 5
+df[df$Player == "Rhett Bomar", "Years.on.Payroll"] <- 2
+df[df$Player == "Rhett Bomar", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Ricky Stanzi
+# https://en.wikipedia.org/wiki/Ricky_Stanzi#Professional_career
+df[df$Player == "Ricky Stanzi", "Draft.Round"] <- 5
+df[df$Player == "Ricky Stanzi", "Years.on.Payroll"] <- 1
+df[df$Player == "Ricky Stanzi", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Robert Griffin III
+# https://www.pro-football-reference.com/players/G/GrifRo01.htm
+df[df$Player == "Robert Griffin III", "Draft.Round"] <- 1
+df[df$Player == "Robert Griffin III", "Years.on.Payroll"] <- 7
+df[df$Player == "Robert Griffin III", "Games.Started"] <- 42
+
+```
+
+```{r}
+
+# Rohan Davey
+# https://www.pro-football-reference.com/players/D/DaveRo01.htm
+df[df$Player == "Rohan Davey", "Draft.Round"] <- 4
+df[df$Player == "Rohan Davey", "Years.on.Payroll"] <- 3
+df[df$Player == "Rohan Davey", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Russell Wilson
+# https://www.pro-football-reference.com/players/W/WilsRu00.htm
+df[df$Player == "Russell Wilson", "Draft.Round"] <- 3
+df[df$Player == "Russell Wilson", "Years.on.Payroll"] <- 10
+df[df$Player == "Russell Wilson", "Games.Started"] <- 151
+df[df$Player == "Russell Wilson", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Rusty Smith
+# https://www.pro-football-reference.com/players/S/SmitRu01.htm
+df[df$Player == "Rusty Smith", "Draft.Round"] <- 6
+df[df$Player == "Rusty Smith", "Years.on.Payroll"] <- 2
+df[df$Player == "Rusty Smith", "Games.Started"] <- 1
+
+```
+
+```{r}
+
+# Ryan Finley
+# https://www.pro-football-reference.com/players/F/FinlRy00.htm
+df[df$Player == "Ryan Finley", "Draft.Round"] <- 4
+df[df$Player == "Ryan Finley", "Years.on.Payroll"] <- 2
+df[df$Player == "Ryan Finley", "Games.Started"] <- 4
+
+```
+
+```{r}
+
+# Ryan Lindley
+# https://www.pro-football-reference.com/players/L/LindRy00.htm
+df[df$Player == "Ryan Lindley", "Draft.Round"] <- 6
+df[df$Player == "Ryan Lindley", "Years.on.Payroll"] <- 3
+df[df$Player == "Ryan Lindley", "Games.Started"] <- 6
+
+```
+
+```{r}
+
+# Ryan Mallett
+# https://www.pro-football-reference.com/players/M/MallRy00.htm
+df[df$Player == "Ryan Mallett", "Draft.Round"] <- 3
+df[df$Player == "Ryan Mallett", "Years.on.Payroll"] <- 5
+df[df$Player == "Ryan Mallett", "Games.Started"] <- 8
+
+```
+
+```{r}
+
+# Ryan Nassib
+# https://www.pro-football-reference.com/players/N/NassRy00.htm
+df[df$Player == "Ryan Nassib", "Draft.Round"] <- 4
+df[df$Player == "Ryan Nassib", "Years.on.Payroll"] <- 2
+df[df$Player == "Ryan Nassib", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Ryan Tannehill
+# https://www.pro-football-reference.com/players/T/TannRy00.htm
+df[df$Player == "Ryan Tannehill", "Draft.Round"] <- 1
+df[df$Player == "Ryan Tannehill", "Years.on.Payroll"] <- 9
+df[df$Player == "Ryan Tannehill", "Games.Started"] <- 125
+df[df$Player == "Ryan Tannehill", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Sage Rosenfels
+# https://www.pro-football-reference.com/players/R/RoseSa00.htm
+df[df$Player == "Sage Rosenfels", "Draft.Round"] <- 4
+df[df$Player == "Sage Rosenfels", "Years.on.Payroll"] <- 8
+df[df$Player == "Sage Rosenfels", "Games.Started"] <- 12
+
+```
+
+```{r}
+
+# Sam Bradford
+# https://www.pro-football-reference.com/players/B/BradSa00.htm
+df[df$Player == "Sam Bradford", "Draft.Round"] <- 1
+df[df$Player == "Sam Bradford", "Years.on.Payroll"] <- 8
+df[df$Player == "Sam Bradford", "Games.Started"] <- 83
+
+```
+
+```{r}
+
+# Sam Darnold
+# https://www.pro-football-reference.com/players/D/DarnSa00.htm
+df[df$Player == "Sam Darnold", "Draft.Round"] <- 1
+df[df$Player == "Sam Darnold", "Years.on.Payroll"] <- 4
+df[df$Player == "Sam Darnold", "Games.Started"] <- 47
+df[df$Player == "Sam Darnold", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Sean Canfield
+# https://en.wikipedia.org/wiki/Sean_Canfield#Professional_career
+df[df$Player == "Sean Canfield", "Draft.Round"] <- 7
+df[df$Player == "Sean Canfield", "Years.on.Payroll"] <- 2
+df[df$Player == "Sean Canfield", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Sean Mannion
+# https://www.pro-football-reference.com/players/M/MannSe00.htm
+df[df$Player == "Sean Mannion", "Draft.Round"] <- 3
+df[df$Player == "Sean Mannion", "Years.on.Payroll"] <- 5
+df[df$Player == "Sean Mannion", "Games.Started"] <- 2
+
+```
+
+```{r}
+
+# Sean Renfree
+# https://www.pro-football-reference.com/players/R/RenfSe00.htm
+df[df$Player == "Sean Renfree", "Draft.Round"] <- 7
+df[df$Player == "Sean Renfree", "Years.on.Payroll"] <- 1
+df[df$Player == "Sean Renfree", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Seneca Wallace
+# https://www.pro-football-reference.com/players/W/WallSe00.htm
+df[df$Player == "Seneca Wallace", "Draft.Round"] <- 4
+df[df$Player == "Seneca Wallace", "Years.on.Payroll"] <- 8
+df[df$Player == "Seneca Wallace", "Games.Started"] <- 22
+
+```
+
+```{r}
+
+# Stefan Lefors
+# https://en.wikipedia.org/wiki/Stefan_LeFors#Professional_career
+df[df$Player == "Stefan Lefors", "Draft.Round"] <- 4
+df[df$Player == "Stefan Lefors", "Years.on.Payroll"] <- 1
+df[df$Player == "Stefan Lefors", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Stephen McGee
+# https://www.pro-football-reference.com/players/M/McGeSt00.htm
+df[df$Player == "Stephen McGee", "Draft.Round"] <- 4
+df[df$Player == "Stephen McGee", "Years.on.Payroll"] <- 2
+df[df$Player == "Stephen McGee", "Games.Started"] <- 1
+
+```
+
+```{r}
+
+# Steve Bellisari
+# https://en.wikipedia.org/wiki/Steve_Bellisari#Professional_career
+df[df$Player == "Steve Bellisari", "Draft.Round"] <- 6
+df[df$Player == "Steve Bellisari", "Years.on.Payroll"] <- 0
+df[df$Player == "Steve Bellisari", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# T.J. Yates
+# https://www.pro-football-reference.com/players/Y/YateT.00.htm
+df[df$Player == "T.J. Yates", "Draft.Round"] <- 5
+df[df$Player == "T.J. Yates", "Years.on.Payroll"] <- 7
+df[df$Player == "T.J. Yates", "Games.Started"] <- 10
+
+```
+
+```{r}
+
+# Tajh Boyd
+# https://en.wikipedia.org/wiki/Tajh_Boyd
+df[df$Player == "Tajh Boyd", "Draft.Round"] <- 6
+df[df$Player == "Tajh Boyd", "Years.on.Payroll"] <- 0
+df[df$Player == "Tajh Boyd", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Tanner Lee
+# https://en.wikipedia.org/wiki/Tanner_Lee#Professional_career
+df[df$Player == "Tanner Lee", "Draft.Round"] <- 6
+df[df$Player == "Tanner Lee", "Years.on.Payroll"] <- 1
+df[df$Player == "Tanner Lee", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Teddy Bridgewater
+# https://www.pro-football-reference.com/players/B/BridTe00.htm
+df[df$Player == "Teddy Bridgewater", "Draft.Round"] <- 1
+df[df$Player == "Teddy Bridgewater", "Years.on.Payroll"] <- 7
+df[df$Player == "Teddy Bridgewater", "Games.Started"] <- 59
+df[df$Player == "Teddy Bridgewater", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Tee Martin
+# https://www.pro-football-reference.com/players/M/MartTe00.htm
+df[df$Player == "Tee Martin", "Draft.Round"] <- 5
+df[df$Player == "Tee Martin", "Years.on.Payroll"] <- 2
+df[df$Player == "Tee Martin", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Tim Rattay
+# https://www.pro-football-reference.com/players/R/RattTi00.htm
+df[df$Player == "Tim Rattay", "Draft.Round"] <- 7
+df[df$Player == "Tim Rattay", "Years.on.Payroll"] <- 8 
+df[df$Player == "Tim Rattay", "Games.Started"] <- 18
+
+```
+
+```{r}
+
+# Tim Tebow
+# https://www.pro-football-reference.com/players/T/TeboTi00.htm
+df[df$Player == "Tim Tebow", "Draft.Round"] <- 1
+df[df$Player == "Tim Tebow", "Years.on.Payroll"] <- 3
+df[df$Player == "Tim Tebow", "Games.Started"] <- 16
+
+```
+
+```{r}
+
+# Todd Husak
+# https://www.pro-football-reference.com/players/H/HusaTo20.htm
+df[df$Player == "Todd Husak", "Draft.Round"] <- 6
+df[df$Player == "Todd Husak", "Years.on.Payroll"] <- 1
+df[df$Player == "Todd Husak", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Tom Brady
+# https://www.pro-football-reference.com/players/B/BradTo00.htm
+df[df$Player == "Tom Brady", "Draft.Round"] <- 6
+df[df$Player == "Tom Brady", "Years.on.Payroll"] <- 22
+df[df$Player == "Tom Brady", "Games.Started"] <- 308
+df[df$Player == "Tom Brady", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Tom Brandstater
+# https://www.pro-football-reference.com/players/B/BranTo00.htm
+df[df$Player == "Tom Brandstater", "Draft.Round"] <- 6
+df[df$Player == "Tom Brandstater", "Years.on.Payroll"] <- 1
+df[df$Player == "Tom Brandstater", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Tom Savage
+# https://www.pro-football-reference.com/players/S/SavaTo00.htm
+df[df$Player == "Tom Savage", "Draft.Round"] <- 4
+df[df$Player == "Tom Savage", "Years.on.Payroll"] <- 3
+df[df$Player == "Tom Savage", "Games.Started"] <- 9
+
+```
+
+```{r}
+
+# Tony Pike
+# https://www.pro-football-reference.com/players/P/PikeTo00.htm
+df[df$Player == "Tony Pike", "Draft.Round"] <- 6 
+df[df$Player == "Tony Pike", "Years.on.Payroll"] <- 1
+df[df$Player == "Tony Pike", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Trace McSorley
+# https://www.pro-football-reference.com/players/M/McSoTr00.htm
+df[df$Player == "Trace McSorley", "Draft.Round"] <- 6 
+df[df$Player == "Trace McSorley", "Years.on.Payroll"] <- 2
+df[df$Player == "Trace McSorley", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Trent Edwards
+# pro-football-reference.com/players/E/EdwaTr01.htm
+df[df$Player == "Trent Edwards", "Draft.Round"] <- 3
+df[df$Player == "Trent Edwards", "Years.on.Payroll"] <- 6 
+df[df$Player == "Trent Edwards", "Games.Started"] <- 33
+
+```
+
+```{r}
+
+# Trevor Siemian
+# https://www.pro-football-reference.com/players/S/SiemTr00.htm
+df[df$Player == "Trevor Siemian", "Draft.Round"] <- 7
+df[df$Player == "Trevor Siemian", "Years.on.Payroll"] <- 5
+df[df$Player == "Trevor Siemian", "Games.Started"] <- 28
+df[df$Player == "Trevor Siemian", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Troy Smith
+# https://www.pro-football-reference.com/players/S/SmitTr02.htm
+df[df$Player == "Troy Smith", "Draft.Round"] <- 5
+df[df$Player == "Troy Smith", "Years.on.Payroll"] <- 4
+df[df$Player == "Troy Smith", "Games.Started"] <- 8
+
+```
+
+```{r}
+
+# Tyler Wilson
+# https://en.wikipedia.org/wiki/Tyler_Wilson_(American_football)#Professional_career
+df[df$Player == "Tyler Wilson", "Draft.Round"] <- 4
+df[df$Player == "Tyler Wilson", "Years.on.Payroll"] <- 1
+df[df$Player == "Tyler Wilson", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Tyrod Taylor
+# https://www.pro-football-reference.com/players/T/TaylTy00.htm
+df[df$Player == "Tyrod Taylor", "Draft.Round"] <- 6
+df[df$Player == "Tyrod Taylor", "Years.on.Payroll"] <- 11
+df[df$Player == "Tyrod Taylor", "Games.Started"] <- 51
+df[df$Player == "Tyrod Taylor", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Vince Young
+# https://www.pro-football-reference.com/players/Y/YounVi00.htm
+df[df$Player == "Vince Young", "Draft.Round"] <- 1
+df[df$Player == "Vince Young", "Years.on.Payroll"] <- 6
+df[df$Player == "Vince Young", "Games.Started"] <- 50
+
+```
+
+```{r}
+
+# Will Grier
+# https://www.pro-football-reference.com/players/G/GrieWi00.htm
+df[df$Player == "Will Grier", "Draft.Round"] <- 3
+df[df$Player == "Will Grier", "Years.on.Payroll"] <- 1
+df[df$Player == "Will Grier", "Games.Started"] <- 2
+
+```
+
+```{r}
+
+# Zac Dysert
+# https://en.wikipedia.org/wiki/Zac_Dysert#Professional_career
+df[df$Player == "Zac Dysert", "Draft.Round"] <- 7
+df[df$Player == "Zac Dysert", "Years.on.Payroll"] <- 2
+df[df$Player == "Zac Dysert", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Zac Robinson
+# https://en.wikipedia.org/wiki/Zac_Robinson#Professional_career
+df[df$Player == "Zac Robinson", "Draft.Round"] <- 7
+df[df$Player == "Zac Robinson", "Years.on.Payroll"] <- 1
+df[df$Player == "Zac Robinson", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Zach Mettenberger
+# https://www.pro-football-reference.com/players/M/MettZa00.htm
+df[df$Player == "Zach Mettenberger", "Draft.Round"] <- 6
+df[df$Player == "Zach Mettenberger", "Years.on.Payroll"] <- 2
+df[df$Player == "Zach Mettenberger", "Games.Started"] <- 10
+
+```
+
+```{r}
+
+# Josh Allen
+# https://www.pro-football-reference.com/players/A/AlleJo02.htm
+df[df$Player == "Josh Allen", "Draft.Round"] <- 1
+df[df$Player == "Josh Allen", "Years.on.Payroll"] <- 4
+df[df$Player == "Josh Allen", "Games.Started"] <- 53
+df[df$Player == "Josh Allen", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# David Greene
+# https://en.wikipedia.org/wiki/David_Greene_(American_football)#Professional_career
+df[df$Player == "David Greene", "Draft.Round"] <- 3
+df[df$Player == "David Greene", "Years.on.Payroll"] <- 2
+df[df$Player == "David Greene", "Games.Started"] <- 0
+
+```
+
+```{r}
+
+# Matt Schaub
+# https://www.pro-football-reference.com/players/S/SchaMa00.htm
+df[df$Player == "Matt Schaub", "Draft.Round"] <- 3
+df[df$Player == "Matt Schaub", "Years.on.Payroll"] <- 16
+df[df$Player == "Matt Schaub", "Games.Started"] <- 93
+
+```
+
+```{r}
+
+# Case Keenum
+# https://www.pro-football-reference.com/players/K/KeenCa00.htm
+df[df$Player == "Case Keenum", "Years.on.Payroll"] <- 9
+df[df$Player == "Case Keenum", "Games.Started"] <- 63
+df[df$Player == "Case Keenum", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+
+# Dan Lefevour
+# https://en.wikipedia.org/wiki/Dan_LeFevour#Cincinnati_Bengals
+df[df$Player == "Dan Lefevour", "Draft.Round"] <- 6
+df[df$Player == "Dan Lefevour", "Years.on.Payroll"] <- 2
+df[df$Player == "Dan Lefevour", "Games.Started"] <- 0
+df[df$Player == "Dan Lefevour", "Under.Contract"] <- "Yes"
+
+```
+
+```{r}
+df <- df %>%
+  filter(Player != "Jalen Hurts")
+```
+
+
+```{r}
+write.csv(df, 'df.csv', row.names=FALSE) 
+```
+
+```{r datacleaning}
+college_qbs <- df %>% 
+  replace_with_na_at(.vars = c("Year.Drafted","Draft.Round", "Years.on.Payroll", "Games.Started"),
+                     condition = ~.x == "N/A")
+
+college_qbs <- college_qbs %>%
+  mutate(Drafted = if_else(is.na(Year.Drafted), "No", "Yes"),
+         Year.Drafted = as.numeric(Year.Drafted),
+         Draft.Round = as.numeric(Draft.Round),
+         Years.on.Payroll = as.numeric(Years.on.Payroll),
+         Games.Started = as.numeric(Games.Started))
+
+college_qbs <- college_qbs %>%
+  mutate(total.TDs = Pass.TD + Rush.TD) %>%
+  mutate(TD.per.game = total.TDs/G)
+
+drafted_qbs <- college_qbs %>%
+  filter(Drafted == "Yes") %>%
+  mutate(NFL.Years.Grouped = 
+           case_when(Years.on.Payroll == 0 ~ "0 Years", 
+                     (Years.on.Payroll > 0 & Years.on.Payroll < 6) ~ "1-5 Years", 
+                     (Years.on.Payroll >5 & Years.on.Payroll <11) ~ "6-10 Years", 
+                     (Years.on.Payroll >10 & Years.on.Payroll <16) ~ "11-15 Years", 
+                     (Years.on.Payroll >15 & Years.on.Payroll <21) ~ "16-20 Years",
+                     Years.on.Payroll >20 ~ "+20 Years",))
+
+drafted_qbs <- drafted_qbs %>%
+  mutate(Sustained.Success = 
+           if_else(NFL.Years.Grouped == "0 Years" | 
+                     NFL.Years.Grouped == "1-5 Years",
+                   "No", "Yes"))
+
+drafted_qbs$NFL.Years.Grouped <- factor(drafted_qbs$NFL.Years.Grouped,
+                         levels = c("0 Years", 
+                                    "1-5 Years", 
+                                    "6-10 Years", 
+                                    "11-15 Years", 
+                                    "16-20 Years", 
+                                    "+20 Years"))
+write.csv(college_qbs, 'college_qbs.csv', row.names = FALSE) 
+write.csv(drafted_qbs, 'drafted_qbs.csv', row.names=FALSE) 
+```
+
