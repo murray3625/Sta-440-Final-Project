@@ -257,9 +257,9 @@ ggarrange(f1, f2, f3, f4, ncol = 2, nrow = 2)
 
 **Figure 4** - This bar graph shows that quarterbacks from certain conferences tend to stick around longer than quarterbacks from other conferences. Quarterbacks from the ACC tend to have the highest average years on payroll (6.18), while quarterbacks from the Sun Belt have the lowest (1). If one were to measure NFL "success" via years on an NFL payroll, this graph would give credence to the hypothesis that quarterbacks from certain conferences tend to perform better in the NFL than others. 
 
-**Note 1** - In all the dataset(s) used for these graphs, I renamed the Pac-10 to the Pac-12, as the conference changed names in 2011 with the addition of two schools, Colorado and Utah. 
+**Note** - In all the dataset(s) used for these graphs, I renamed the Pac-10 to the Pac-12, as the conference changed names in 2011 with the addition of two schools, Colorado and Utah. 
 
-**Note 2** - The red lines in **Figure 1**, **Figure 3**, and **Figure 4** are positioned at the mean value of the variable on the y-axis.  
+**Note** - The red lines in **Figure 1**, **Figure 3**, and **Figure 4** are positioned at the mean value of the variable on the y-axis.  
 
 \pagebreak
 
@@ -384,6 +384,8 @@ rpart.plot(tree, extra = 106)
 
 # 3 Results 
 
+The coefficient estimates, 95% confidence intervals, and p-values are summarized in **Table 1** below. Moreover, all the following results are interpreted using an alpha = 0.05 significance threshold. 
+
 ```{r base-model}
 
 data.subset <- data.subset %>%
@@ -422,7 +424,7 @@ From the results above, one can see that the only factors that have a statistica
 
 More specifically, we find that:
 
-* Holding all else equal, a quarterback who has an average adjusted passing yards per attempt (in college, among all quarterbacks drafted from 2000 to 2019) and is not currently under contract has an expected odds of reaching at least on Pro Bowl during his NFL career of $e^{-2.688}$ = 0.068.
+* Holding all else equal, a quarterback who has an average adjusted passing yards per attempt (in college, among all quarterbacks drafted from 2000 to 2019) and is not currently under contract has an expected odds of reaching at least one Pro Bowl during his NFL career of $e^{-2.688}$ = 0.068.
  
 * Holding all else equal, an increase in a quarterback's average adjusted passing yards per attempt (in college) by one yard multiples the odds of that quarterback making at least one Pro Bowl by approximately $e^{0.677}$ = 1.968. 
 
@@ -436,11 +438,11 @@ More specifically, we find that:
 
 Looking back at **1.3 Objectives**, the main objective of this study is to determine the college statistics that are most strongly associated with NFL success for quarterbacks. In doing so, I also hoped to quantify "success". This objective was achieved, and I was also able to sufficiently define a measure of success that serves as the response variable for my model. Overall, I was able to uncover interesting insights regarding the relationship between quarterbacks' college statistics and their success in the NFL:
 
-* The model suggests that a quarterback's adjusted passing yards per attempt in college has a positive association with the odds of making the Pro Bowl at least once in one's career. This finding is not surprising, as quarterbacks with higher values for this variable are more likely to frequently make impactful, high yardage completions. 
+* The model suggests that a quarterback's adjusted passing yards per attempt in college has a positive association with the odds of making at least one Pro Bowl. This finding is not surprising, as quarterbacks with higher values for this variable are more likely to frequently make impactful, high yardage completions. 
 
-* The model also suggests that the odds of making the Pro Bowl at least once are associated with a quarterback's (college) touchdowns per game, dependent on that quarterback's adjusted passing yards per attempt. In other words, for certain values of adjusted passing yards per attempt, touchdowns per game has a statistically significant association with the odds that a quarterback makes the Pro Bowl at least once, while for other values, it does not. 
+* The model also suggests that the association between a quarterback's touchdowns per game and the odds of making at least one Pro Bowl varies for different values of a quarterback's adjusted passing yards per attempt. Nonetheless, when a quarterback's adjusted passing yards per attempt is equal to the mean value, the association between touchdowns per game and the odds of making at least one Pro Bowl is not statistically significant at an alpha = 0.05 significance threshold. 
 
-Curiously, a quarterback's completion percentage was not included in the final logistic regression model, as the variable for this statistic was not included in the classification tree used for variable selection. Additionally, when I did try to include the variable for that parameter in the model, the p-value was extremely high (> 0.7), again suggesting that the association between completion percentage in college football and one's odds of making at least one Pro Bowl are tenuous. 
+Curiously, a quarterback's completion percentage was not included in the final logistic regression model, as the variable for this statistic was not included in the classification tree used for variable selection. Additionally, when I did try to include the variable for that parameter in the model, the p-value was extremely high (> 0.7), again suggesting that the association between completion percentage in college football and one's odds of making at least one Pro Bowl is tenuous. 
 
 Furthermore, the level of competition that one plays against in college also does not seem to have a significant association with the odds of making at least one Pro Bowl. The indicator variable for whether or not a quarterback played in a Power 5 conference in college was not included in the regression tree, and the variable again had a very high p-value (> 0.5) when included in a regression model. 
 
@@ -628,7 +630,7 @@ emplogitplot1(PB ~ Pass.AY.A.MC,
               data = data.subset,
               ngroups = 20,
               xlab = "Adjusted Passing Yards per Game",
-              ylab = "Log (Odds of Making at Least on Pro Bowl)",
+              ylab = "Log (Odds of Making at Least one Pro Bowl)",
               main = "Linearity Test #1", 
               linecol = "blue")
 
@@ -636,7 +638,7 @@ emplogitplot1(PB ~ TDG.MC,
               data = data.subset,
               ngroups = 20,
               xlab = "Touchdowns per Game",
-              ylab = "Log (Odds of Making at Least on Pro Bowl)",
+              ylab = "Log (Odds of Making at Least one Pro Bowl)",
               main = "Linearity Test #2", 
               linecol = "blue")
 
@@ -644,7 +646,7 @@ emplogitplot1(PB ~ INTG.MC,
               data = data.subset,
               ngroups = 20,
               xlab = "Interceptions per Game",
-              ylab = "Log (Odds of Making at Least on Pro Bowl)",
+              ylab = "Log (Odds of Making at Least one Pro Bowl)",
               main = "Linearity Test #3", 
               linecol = "blue")
 
