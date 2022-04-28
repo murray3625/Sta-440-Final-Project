@@ -1,7 +1,7 @@
 ---
 title: |
   <center> Predicting NFL Success among </center>
-  <center> Drafted NCAA Quarterbacks from 2000-2019 </center>
+  <center> NCAA Quarterbacks Drafted from 2000-2019 </center>
 author: "Matthew Murray"
 geometry: "top = 2cm, bottom = 2cm, left = 2cm, right = 2cm"
 fontsize: 10 pt
