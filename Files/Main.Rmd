@@ -193,7 +193,7 @@ f2.data <- data.subset %>%
 
 f2 <- ggplot(data = f2.data, 
        aes(x = Conf, y = n)) + 
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", fill = "steelblue", color = "black") +
   geom_hline(yintercept = mean(f2.data$n), color="red") +
   labs(x = "Conference", 
        y = "Number of QB's Drafted", 
@@ -209,7 +209,7 @@ f2 <- ggplot(data = f2.data,
 
 f3 <- ggplot(data = data.subset, 
        aes(x = as.numeric(Years.on.Payroll))) + 
-  geom_histogram() +
+  geom_histogram(fill = "steelblue", color = "black") +
   labs(x = "Number of Years on NFL Payroll", 
        y = "Count", 
        title = "Distribution of the Number of Years on an NFL Payroll \n for NFL Quarterbacks Drafted from 2000 - 2019",
@@ -228,7 +228,7 @@ f4.data <- data.subset %>%
 
 f4 <- ggplot(data = f4.data, 
        aes(x = Conf, y = Mean.Pass.YOP)) + 
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", fill = "steelblue", color = "black") +
   geom_hline(yintercept = mean(f4.data$Mean.Pass.YOP), color="red") +
   labs(x = "Conference", 
        y = "Average Years on Payroll", 
@@ -338,7 +338,7 @@ In the plot above, the highest correlation between two predictors is 0.97, which
 
 ### 2.2.2 Classification Tree
 
-I also decided to create a classification tree to further guide my variable selection process. Classification trees are very useful tools for variable selection, as they rely on little assumptions (especially compared to logistic regression), can give insight into the order of importance of predictor variables, and are useful for examining potential interaction effects. Similar to how an interaction effect allows one to interpret the effect of one predictor on the response based on the value of another predictor, with classification trees, the interpretation of one node is often dependent on the value of another node. Ultimately, I chose predictor variables for my logistic regression model based on the nodes of my classification tree. I also tested for various interaction terms--using drop-in-deviance tests--based on the results of my classification tree. The results of these tests can be found in **Appendix A3**.  
+I also decided to create a classification tree to further guide my variable selection process. Classification trees are very useful tools for variable selection, as they rely on little assumptions (especially compared to logistic regression), can give insight into the order of importance of predictor variables, and are useful for examining potential interaction effects. Similar to how an interaction effect allows one to interpret the association between one predictor and the response based on the value of another predictor, with classification trees, the interpretation of one node is often dependent on the value of another node. Ultimately, I chose predictor variables for my logistic regression model based on the nodes of my classification tree. I also tested for various interaction terms--using drop-in-deviance tests--based on the results of my classification tree. The results of these tests can be found in **Appendix A3**.  
 
 Nonetheless, classifications trees have drawbacks as well. A classification tree itself can be very sensitive to hyper-parameter tuning, meaning that its results may not be as stable and useful as those from logistic regression. Additionally, decision trees are fit using recursive binary splitting. Recursive binary splitting is a greedy algorithm because at each step of the process of building the tree, the “best” split is made at that particular step, rather than looking ahead and making a split that will lead to a better overall prediction. Another notable downside of decision trees is that they can easily be overfit to one’s training data, particularly when using many predictor variables without a type of model selection criterion. To account for this problem, I used a post-pruning method called cost complexity pruning. In short, cost complexity pruning obtains a sequence of trees that are penalized for the number of nodes they have via a tuning parameter. The optimal value for this tuning parameter is then obtained using cross-validation, and consequently the optimal tree is obtained using this optimal value.
 
